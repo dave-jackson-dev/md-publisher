@@ -74,3 +74,21 @@
   product call with no upstream basis, recorded honestly as such.
 - New hypothesis: H16 (does silent overwrite hold up once tested). All sixteen (H1–H16) carry
   forward to MVP Planning.
+
+## Workshop 5 — Architecture Design
+
+**Status: complete**, accepted 2026-09-27. See
+[`05-architecture-design.md`](./05-architecture-design.md), transcript at
+[`transcripts/05-architecture-design.transcript.md`](./transcripts/05-architecture-design.transcript.md).
+
+- Two bounded contexts (Language ↔ `packages/language`; Publishing, not yet its own package).
+  Story 3 (Review & Ship) intentionally has no bounded context — its actors are external to
+  md-publisher's domain (git-hosting platform, CI runner).
+- Dependency Rule holds for both contexts; Publishing will need ports/adapters for the three
+  format libraries once built.
+- **Architecture recommendation, not yet acted on:** extract a `packages/publishing` library so
+  both `cli` and `extension` can depend on it, rather than the extension importing from the CLI.
+- Two-row dependency map (Write & Validate → Generate Output → Review & Ship); cross-checked
+  against the Story Map's release order — no conflicts found.
+- No new hypothesis — this workshop's outputs are architecture judgment, not customer-validated
+  claims. All sixteen (H1–H16) still carry forward to MVP Planning.
