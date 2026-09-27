@@ -38,9 +38,10 @@ below per the founder's explicit direction — see the Hypothesis Register and t
 | H12 | Structural validation-before-generation (H3's differentiator claim) addresses the specific pains named in the VPC — silent cross-format breakage, broken EPUB links discovered post-publish — with enough severity/frequency that leading with it, rather than "one source, many formats," is the right value-prop framing. | VPC |
 | H13 | OSS/indie authors will actually adopt with "no themes at v1, plain-but-clean default typography" meeting their Required gains — i.e. deferring theming (a founder-confirmed 2026-09-27 backlog decision, not itself in question) doesn't cost adoption once tested with real users. | VPC |
 | H14 | Docs-as-code writers adopt without "custom templates/branding per format" at v1 — i.e. deferring it (founder-confirmed 2026-09-27 backlog decision) doesn't block this segment's adoption once tested. | VPC |
+| H15 | RBAC/Zero Trust "I CANNOT" boundary stories are not meaningful for v1 (a single-user local tool) and only become load-bearing once the hosted build/publish service ships — deferring them until then is the right call, not a corner cut. | Story Map |
 
-**H1–H14 cover all nine BMC blocks' and both VPCs' riskiest assumptions and are all unvalidated** —
-no customer
+**H1–H15 cover all nine BMC blocks', both VPCs', and the Story Map's riskiest assumptions and are
+all unvalidated** — no customer
 interviews have happened yet, for the segments, the revenue plan, or the resourcing/channel/partner
 assumptions. This canvas reflects founder direction on segments and revenue framing, not market
 validation; per the methodology, update it the moment a real conversation with either segment
