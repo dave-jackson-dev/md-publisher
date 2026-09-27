@@ -92,3 +92,18 @@
   against the Story Map's release order — no conflicts found.
 - No new hypothesis — this workshop's outputs are architecture judgment, not customer-validated
   claims. All sixteen (H1–H16) still carry forward to MVP Planning.
+
+## Workshop 6 — Three Amigos (Specification by Example)
+
+**Status: complete**, accepted 2026-09-27. See
+[`06-three-amigos.md`](./06-three-amigos.md), transcript at
+[`transcripts/06-three-amigos.transcript.md`](./transcripts/06-three-amigos.transcript.md).
+
+- 10 Gherkin Features (one per Story Map story; Walking Skeleton subsumed into Feature 5), 27
+  scenarios total, each traced to a named business rule or domain-story narrative.
+- `stop-three-amigos:evaluate` re-verified independently and found two real gaps: narrative drift
+  from the Story Map's exact wording in 5 of 10 Features, and generic non-concrete example data in
+  7 of 10 Features. Both fixed. No cross-scenario data dependencies found.
+- Zero-Trust coverage stays the H15 deferral, applied consistently across all 10 Features rather
+  than fabricating scenarios to hit the methodology's count — explicitly not a new decision.
+- No new hypothesis. All sixteen (H1–H16) carry forward to MVP Planning.
