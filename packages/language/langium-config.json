@@ -1,0 +1,16 @@
+{
+    "projectName": "MdPublisher",
+    "languages": [
+        {
+            "id": "md-publisher",
+            "grammar": "src/md-publisher.langium",
+            "fileExtensions": [
+                "mdpub"
+            ],
+            "textMate": {
+                "out": "syntaxes/md-publisher.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}
