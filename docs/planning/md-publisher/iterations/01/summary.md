@@ -58,3 +58,19 @@
   single-user local tool with no runtime RBAC boundary to enforce.
 - New hypothesis: H15, appended to `01-bmc.md`'s register. All fifteen (H1–H15) carry forward to
   MVP Planning.
+
+## Workshop 4 — Domain Storytelling
+
+**Status: complete**, accepted 2026-09-27. See
+[`04-domain-storytelling.md`](./04-domain-storytelling.md), transcript at
+[`transcripts/04-domain-storytelling.transcript.md`](./transcripts/04-domain-storytelling.transcript.md).
+
+- 3 domain stories (Write & Validate, Generate Output, Review & Ship) with 9 recorded business
+  rules and Mermaid diagrams (reasoned choice over a dedicated canvas, stated explicitly). Get
+  Started (install) excluded — no business-rule content, a documented low-stakes exception.
+- **No real domain expert was interviewed** — the workshop's own biggest departure from how it's
+  meant to run, flagged prominently in the artifact rather than glossed over.
+- One founder decision: BR-5 confirmed as silent-overwrite-on-generate (no warn/force-flag), a
+  product call with no upstream basis, recorded honestly as such.
+- New hypothesis: H16 (does silent overwrite hold up once tested). All sixteen (H1–H16) carry
+  forward to MVP Planning.
