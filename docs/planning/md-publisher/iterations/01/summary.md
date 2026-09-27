@@ -21,3 +21,23 @@
 - Eleven Hypothesis Register entries (H1–H11) are open, unvalidated by any customer interview, and
   carry forward to MVP Planning (Workshop 8), which must reconcile every one still open against the
   v1 scope cut.
+
+## Workshop 2 — Value Proposition Canvas
+
+**Status: complete**, accepted 2026-09-27. Two canvases (one per BMC Customer Segment), per
+[`02-vpc-docs-as-code-writers.md`](./02-vpc-docs-as-code-writers.md) and
+[`02-vpc-oss-indie-authors.md`](./02-vpc-oss-indie-authors.md), transcript at
+[`transcripts/02-vpc.transcript.md`](./transcripts/02-vpc.transcript.md).
+
+- `stop-vpc:evaluate` findings: Fit Verification (0 orphan pains, 0 orphan gains) passed on first
+  draft. Two other checks failed and were fixed same-attempt: Severity/Frequency wasn't populated
+  for any Pain (added, with the highest-priority pain named per segment), and the Customer Profiles
+  weren't tagged as founder-delegated assumptions on the artifact itself (added an Assumption basis
+  note to both). `objectiveMet: true` on the corrected artifacts. No segment-confusion signal
+  found.
+- **Backlog item (founder-confirmed 2026-09-27): templates/theming for DOCX/PDF/EPUB output is out
+  of v1 scope**, tracked here rather than left as an ambiguous gap. Both segments' v1 experience
+  ships with plain-but-clean default typography only. H13/H14 narrowed accordingly — no longer
+  "should we defer," only "does deferring cost us adoption once tested."
+- Three new Hypothesis Register entries opened (H12–H14, appended to `01-bmc.md`'s register, not
+  duplicated here). All fourteen (H1–H14) carry forward to MVP Planning.
