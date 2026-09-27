@@ -107,3 +107,19 @@
 - Zero-Trust coverage stays the H15 deferral, applied consistently across all 10 Features rather
   than fabricating scenarios to hit the methodology's count — explicitly not a new decision.
 - No new hypothesis. All sixteen (H1–H16) carry forward to MVP Planning.
+
+## Workshop 7 — UX Design
+
+**Status: complete**, accepted 2026-09-27. See [`07-ux-design.md`](./07-ux-design.md),
+mockups at [`mockups/cli-output.svg`](./mockups/cli-output.svg) and
+[`mockups/editor-diagnostics.svg`](./mockups/editor-diagnostics.svg), transcript at
+[`transcripts/07-ux-design.transcript.md`](./transcripts/07-ux-design.transcript.md).
+
+- 2 real SVG mockups (not Mermaid), each with 3 stacked states — the only two UI surfaces
+  md-publisher itself renders. The other 8 Feature-implied surfaces (VS Code Marketplace, npm,
+  e-readers, GitHub PR UI) belong to other systems and were explicitly excluded, not invented.
+- 3 consolidated screen-flow diagrams (not 10) grouping Story Cards that share a real flow.
+- `stop-ux-design:evaluate` found one real gap: the traceability table was Feature-level and
+  missed that Feature 6 also has a "refused" scenario. Fixed with a scenario-level table covering
+  every scenario across all 10 Features.
+- No new hypothesis. All sixteen (H1–H16) carry forward to MVP Planning.
