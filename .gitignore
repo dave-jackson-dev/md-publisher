@@ -18,3 +18,9 @@ syntaxes/
 .nx/polygraph
 .claude/worktrees
 .claude/settings.local.json
+
+# Lean-Agile MVP workspace. project.json IS tracked: being a marked project is a fact about the
+# repo and should survive a clone. Everything else under .mvp/ is local app state (mutated by
+# every mvp query, not just writes) and must stay machine-local.
+.mvp/*
+!.mvp/project.json
