@@ -41,3 +41,20 @@
   "should we defer," only "does deferring cost us adoption once tested."
 - Three new Hypothesis Register entries opened (H12–H14, appended to `01-bmc.md`'s register, not
   duplicated here). All fourteen (H1–H14) carry forward to MVP Planning.
+
+## Workshop 3 — User Story Map
+
+**Status: complete**, accepted 2026-09-27. See
+[`03-user-story-map.md`](./03-user-story-map.md), transcript at
+[`transcripts/03-story-map.transcript.md`](./transcripts/03-story-map.transcript.md).
+
+- 4 Activities, a walking skeleton, and 7 Sprint 1/2 stories, every one traced to a named VPC entry
+  (no floating stories). Sprint 3 deliberately empty — no Desired/Unexpected-tier VPC entry to
+  source a story from beyond the already-decided theming backlog item.
+- `stop-story-map:evaluate` findings: traceability and Sprint-1 coherence both passed cleanly. One
+  judgment call, founder-confirmed rather than decided unilaterally: **zero "I CANNOT" Zero Trust
+  boundary stories exist**, treated as a documented exception (not a silent gap, not fabricated
+  stories for a boundary v1's architecture doesn't have) — tracked as H15, since v1 is a
+  single-user local tool with no runtime RBAC boundary to enforce.
+- New hypothesis: H15, appended to `01-bmc.md`'s register. All fifteen (H1–H15) carry forward to
+  MVP Planning.
