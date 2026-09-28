@@ -2,7 +2,7 @@
 
 ## `user-guide/` — a real, generated Publication
 
-A minimal but real three-chapter Publication, checked in together with its actual generated
+A minimal but real four-chapter Publication, checked in together with its actual generated
 output, so you can see what `md-publisher-cli generate` produces without having to build it
 yourself first.
 
@@ -11,12 +11,20 @@ examples/user-guide/
   01-introduction.mdpub       front matter with `toc: true` (the EPUB table-of-contents source)
   02-setup.mdpub
   03-advanced-topics.mdpub
+  04-syntax-reference.mdpub   every construct md-publisher supports, syntax and output side by side
+  diagram.png                  a placeholder image, referenced by 04-syntax-reference.mdpub
   dist/                        generated output, committed as-is — see below
     user-guide.docx
     user-guide.pdf
     user-guide.epub
     user-guide/                 the Web target: index.html + one page per chapter + styles.css
 ```
+
+`04-syntax-reference.mdpub` is the one to read for a complete tour of the grammar: headings,
+paragraphs (soft wraps, hard breaks), emphasis/strong, code spans, fenced code blocks, blockquotes
+(nested), lists (ordered/unordered, nested), images, links, cross-references, and thematic breaks
+— each shown as a fenced-code-block "Syntax:" example (escaped with a `~~~` fence where it needs
+to show a literal ` ``` `) immediately followed by that same construct rendered live.
 
 Chapter order is filename-alphabetical (`01-`, `02-`, `03-` prefixes) — see
 [packages/publishing/README.md](../packages/publishing/README.md) for why. Each chapter links to
@@ -35,6 +43,13 @@ This is the exact command that produced `dist/`. It will silently overwrite the 
 with a freshly generated copy (BR-5) — diff `dist/` afterward if you want to confirm nothing
 changed. Requires the workspace to be built first (`npm install && npm run langium:generate &&
 npm run build` from the repo root — see the root [README](../README.md)).
+
+Running it also creates a local `examples/user-guide/.gitignore` (Feature 10/BR-8 — see
+[packages/cli/README.md](../packages/cli/README.md)). **Delete that file before running `git add`
+here** — this is the one directory in the repo where generated output is deliberately committed,
+and that auto-created file, being more deeply nested, would otherwise override the root
+`.gitignore`'s exception for it and silently hide `dist/`'s contents from git. See the comment
+above `examples/user-guide/.gitignore` in the root `.gitignore` for the full explanation.
 
 ### What to look at, per format
 

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syntax Reference</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav><ul><li><a href="01-introduction.html">Introduction</a></li><li><a href="02-setup.html">Setup</a></li><li><a href="03-advanced-topics.html">Advanced Topics</a></li><li><a href="04-syntax-reference.html">Syntax Reference</a></li></ul></nav>
+<h1 id="syntax-reference">Syntax Reference</h1>
+<p>Every construct md-publisher understands, with its raw syntax shown as a code block followed by what it actually renders as. See <a href="02-setup.html#setup">Setup</a> if you have not installed the CLI yet, or the <a href="https://github.com/dave-jackson-dev/md-publisher#readme">project README</a> for the exact scope (a practical CommonMark superset, not the full spec).</p>
+<h2 id="headings">Headings</h2>
+<p>Syntax:</p>
+<pre><code># Heading level 1
+## Heading level 2
+###### Heading level 6 (the deepest level supported)</code></pre>
+<p>Every heading in this Publication (including this one) is a live example — headings are not inline-parsed, so emphasis or links inside heading text are not supported.</p>
+<h2 id="paragraphs-and-line-breaks">Paragraphs and Line Breaks</h2>
+<p>Syntax:</p>
+<pre><code>A paragraph is one or more lines with no blank line between them.
+A soft-wrapped second line like this one joins the first with a single space.
+
+A blank line starts a new paragraph.
+
+End a line with a trailing backslash\
+or two or more trailing spaces to force a hard line break within one paragraph.</code></pre>
+<p>Output: this sentence is deliberately wrapped onto a second source line with no blank line in between, and renders as one paragraph joined by a space, not two.</p>
+<p>This is a new paragraph, started only because a blank line came before it.</p>
+<p>This line ends with a trailing backslash<br>so the text after it starts on its own line, within the same paragraph as the line above.</p>
+<h2 id="emphasis-and-strong">Emphasis and Strong</h2>
+<p>Syntax:</p>
+<pre><code>*emphasis* or _emphasis_
+**strong** or __strong__</code></pre>
+<p>Output: <em>emphasis</em>, <em>emphasis</em> (the same thing, two spellings), <strong>strong</strong>, <strong>strong</strong> (also the same thing, two spellings).</p>
+<h2 id="code-spans">Code Spans</h2>
+<p>Syntax:</p>
+<pre><code>Use `inline code` like this, for a variable name or a short command.</code></pre>
+<p>Output: use <code>inline code</code> like this, for a variable name or a short command.</p>
+<h2 id="fenced-code-blocks">Fenced Code Blocks</h2>
+<p>Syntax (shown here inside a <code>~~~</code>-fenced block so the <code>```</code> fence itself can appear literally):</p>
+<pre><code>```js
+const x = 1;
+console.log(x);
+```</code></pre>
+<p>Output:</p>
+<pre><code class="language-js">const x = 1;
+console.log(x);</code></pre>
+<p>The language after the opening fence (<code>js</code> above) is optional and carried through as a CSS class on Web/EPUB output for syntax-highlighting tools to key off; DOCX and PDF render the content in a monospace font regardless of language.</p>
+<h2 id="blockquotes">Blockquotes</h2>
+<p>Syntax:</p>
+<pre><code>&gt; A blockquote line.
+&gt; A second line joins the first as one paragraph inside the quote.
+
+&gt;&gt; A nested quote (one more leading &quot;&gt;&quot; per level).</code></pre>
+<p>Output:</p>
+<blockquote>
+<p>A blockquote line. A second line joins the first as one paragraph inside the quote.</p>
+</blockquote>
+<blockquote>
+<p>A nested quote — one level deeper than the one above.</p>
+</blockquote>
+<h2 id="lists">Lists</h2>
+<p>Syntax:</p>
+<pre><code>- An unordered item
+- Another item
+  - A nested item (indent it under the item it belongs to)
+- Back at the outer level
+
+1. An ordered item
+2. Another ordered item</code></pre>
+<p>Output:</p>
+<ul>
+<li>An unordered item</li>
+<li>Another item
+<ul>
+<li>A nested item</li>
+</ul></li>
+<li>Back at the outer level</li>
+</ul>
+<ol>
+<li>An ordered item</li>
+<li>Another ordered item</li>
+</ol>
+<p>Note: a list item's own content is always exactly one line — there is no continuation-line support for a single item spanning multiple paragraphs.</p>
+<h2 id="images">Images</h2>
+<p>Syntax:</p>
+<pre><code>![A short diagram](diagram.png)</code></pre>
+<p>Output: <img src="diagram.png" alt="A short diagram"></p>
+<p>Image <em>syntax</em> is fully supported everywhere above, but embedding the actual file is not finished yet: Web/EPUB reference the path as written (broken unless you copy the file alongside the output yourself), and DOCX/PDF currently render a <code>[Image: alt text]</code> placeholder instead of the picture.</p>
+<h2 id="links-and-cross-references">Links and Cross-References</h2>
+<p>Syntax:</p>
+<pre><code>[An external link](https://example.com)
+[A cross-reference to a heading in this Publication](#setup)</code></pre>
+<p>Output: <a href="https://example.com">an external link</a> goes anywhere on the web with no validation. <a href="02-setup.html#setup">Setup</a> is a cross-reference — md-publisher checks at build time (and live, as you type) that a heading named &quot;Setup&quot; actually exists somewhere in the Publication, and refuses to generate any output at all if it does not.</p>
+<h2 id="thematic-breaks">Thematic Breaks</h2>
+<p>Syntax:</p>
+<pre><code>---</code></pre>
+<p>(<code>***</code> and <code>___</code> work identically.) Output, immediately below this paragraph:</p>
+<hr>
+<p>See <a href="01-introduction.html#introduction">Introduction</a> to start over, or <a href="03-advanced-topics.html#advanced-topics">Advanced Topics</a> for how Structure Violations and the EPUB table-of-contents marker work.</p>
+</body>
+</html>

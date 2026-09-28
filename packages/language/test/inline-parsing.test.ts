@@ -42,6 +42,14 @@ describe('parseInline', () => {
         expect(nodes[0]).toEqual({ type: 'code', value: 'code', start: 0, end: 8 });
     });
 
+    test('a single-backtick span skips over an unrelated longer run to find its real closer', () => {
+        // A single-backtick opener must not be fooled by a ``` run appearing before the actual
+        // closing single backtick (found via examples/user-guide/04-syntax-reference.mdpub,
+        // which does exactly this to show a fenced-code-block's own syntax as a code span).
+        const nodes = parseInline('a ` ``` ` b');
+        expect(nodes[1]).toEqual({ type: 'code', value: '```', start: 2, end: 9 });
+    });
+
     test('a general link (not a cross-reference)', () => {
         const nodes = parseInline('see [the docs](https://example.com) now');
         expect(nodes[1]).toEqual({ type: 'link', text: 'the docs', url: 'https://example.com', start: 4, end: 35 });

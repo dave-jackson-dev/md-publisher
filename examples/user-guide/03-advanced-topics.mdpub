@@ -8,4 +8,4 @@ A link like this one pointing at [Setup](#setup) only resolves if a heading name
 
 EPUB output needs exactly one chapter whose front matter marks it as the table-of-contents source, which is what the Introduction chapter does.
 
-See [Introduction](#introduction) to start over from the beginning.
+See the [Syntax Reference](#syntax-reference) for every construct md-publisher supports, or [Introduction](#introduction) to start over from the beginning.
