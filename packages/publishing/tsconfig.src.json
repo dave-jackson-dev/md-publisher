@@ -3,14 +3,12 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "out",
-        "declarationDir": "out"
+        "declarationDir": "out",
+        "esModuleInterop": true
     },
     "references": [
         {
             "path": "../language/tsconfig.src.json"
-        },
-        {
-            "path": "../publishing/tsconfig.src.json"
         }
     ],
     "include": [
