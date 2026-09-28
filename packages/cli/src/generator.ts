@@ -1,9 +1,9 @@
-import type { Model } from 'md-publisher-language';
+import type { Document } from 'md-publisher-language';
 import { expandToNode, toString } from 'langium/generate';
 import * as fs from 'node:fs';
 import { extractDestinationAndName } from './util.js';
 
-export function generateOutput(model: Model, source: string, destination: string): string {
+export function generateOutput(model: Document, source: string, destination: string): string {
     const data = extractDestinationAndName(destination);
 
     const fileNode = expandToNode`
