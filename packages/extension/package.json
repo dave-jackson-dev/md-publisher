@@ -26,7 +26,7 @@
         "languages": [{
             "id": "md-publisher",
             "aliases": ["MD Publisher", "md-publisher"],
-            "extensions": [".mdpub"],
+            "extensions": [".md",".mdpub"],
             "configuration": "./language-configuration.json"
         }],
         "grammars": [{
