@@ -39,12 +39,13 @@ examples/user-guide/     a real 3-chapter Publication with its actual generated 
 
 packages/
   language/              the Language bounded context (grammar + Structure Violation validation)
-    src/md-publisher.langium       real .mdpub grammar: front matter, headings, cross-references
+    src/md-publisher.langium       block/inline-split grammar: a practical CommonMark superset
+    src/md-publisher-inline.ts    the inline scanner (emphasis/strong/code/links/images/refs)
     src/generated/                AST/grammar/module — generated, do not hand-edit
     src/md-publisher-module.ts    DI module for the language services
-    src/md-publisher-validator.ts BR-1..BR-4 Structure Violation checks
-    src/md-publisher-util.ts      parseHeading/parseCrossReference/slugify, reused by publishing
-    test/                         Vitest specs: parsing, linking (cross-document), validating
+    src/md-publisher-validator.ts BR-1/BR-3/BR-4 Structure Violation checks (BR-2 retired)
+    src/md-publisher-util.ts      per-block-type raw-text parsers + slugify, reused by publishing
+    test/                         Vitest specs: block-parsing, inline-parsing, linking, validating
   publishing/            the Publishing bounded context — compiles a validated Publication into
                           DOCX/PDF/EPUB/Web output. Architecture Design recommended extracting this
                           into its own package rather than leaving it inside packages/cli; Sprint 1b
@@ -55,10 +56,11 @@ packages/
     src/generate.ts         runs targets independently (BR-7); BuildTargetViolation (BR-6) is per-target
   cli/                     `md-publisher-cli` — thin commander wrapper: validate, refuse-or-generate
     src/main.ts             the `generate <publication-dir> --targets ...` command
+    src/gitignore.ts       ensures dist/ is gitignored (BR-8/Feature 10, structural not by convention)
     bin/cli.js             entry point (`node ./bin/cli`)
   extension/                `vscode-md-publisher` — VS Code extension (LSP client + syntax)
     src/language/main.ts   language server entry point
-    src/extension/main.ts  extension activation
+    src/extension/main.ts  extension activation; shows a status bar warning on LSP disconnect (Feature 8)
 ```
 
 Each package has its own README with more detail
@@ -77,8 +79,8 @@ touching a package you haven't worked in yet.
 - `npm run build` — `tsc -b tsconfig.build.json` across all project references, then
   `npm run build --workspaces` (which also runs the extension's esbuild bundling step).
 - `npm run watch` — incremental `tsc -b --watch` for the whole graph.
-- `npm test` — runs `packages/language`'s and `packages/publishing`'s Vitest suites. `cli` and
-  `extension` have no test scripts defined yet; don't assume `npm test` covers them.
+- `npm test` — runs `packages/language`'s, `packages/publishing`'s, and `packages/cli`'s Vitest
+  suites. `extension` has no test script defined yet; don't assume `npm test` covers it.
 - Manual end-to-end check: `node packages/cli/bin/cli.js generate <publication-dir> --targets
   docx,pdf,web,epub` against a directory of `.mdpub` files, then inspect `./dist`.
 - VS Code extension debugging: open this folder in VS Code and press F5 (`.vscode/launch.json`
@@ -104,33 +106,52 @@ For general Nx workflow questions, prefer the `nx-workspace` and `nx-generate` s
 server if available in your session before guessing flags — this repo doesn't have bespoke Nx
 conventions beyond the quirk above.
 
-## Current state: Sprint 1 implemented
+## Current state: Sprint 2 implemented
 
 Iteration 01's MVP Workshops (all nine, merged to `dev` via PR #10/#11) settled the product
 decisions — see `docs/planning/md-publisher/iterations/01/summary.md` for the fast version, or the
-full docs for detail (BR-1..BR-9, the Gherkin Features, the Sprint 1a/1b split). Both sub-sprints
-are now implemented:
+full docs for detail (BR-1..BR-9, the Gherkin Features, the Sprint 1a/1b split). **A founder-added
+requirement after Sprint 1 shipped** (full CommonMark grammar support, not sourced from any
+workshop — see `08-mvp-plan.md`'s Finding 3 and `10-sprint-2-grammar-plan.md`) became Sprint 2,
+sequenced before the Story Map's own "Sprint 2" (renumbered "Sprint 3" for execution purposes
+only). All of Sprint 1, Sprint 2, and Sprint 3 are now implemented:
 
-- **Sprint 1a — Validate** (`packages/language`): a real `.mdpub` grammar (front matter, ATX
-  headings, cross-reference links `[text](#anchor)`), and Structure Violation checks for BR-1
-  (dangling cross-reference), BR-4 (ambiguous anchor, resolved Publication-wide), BR-2 (front
-  matter must precede content), and BR-3 (no heading-level skips).
-- **Sprint 1b — Generate** (`packages/publishing`, `packages/cli`): `packages/publishing` compiles
-  a validated Publication (a directory of `.mdpub` files, chapter order = filename-alphabetical —
-  an assumption, not a sourced requirement, since no manifest/ordering format is specified anywhere
-  in the workshop docs) into DOCX, PDF, Web, and EPUB output. EPUB requires one chapter's front
-  matter to declare `toc: true` (BR-6's table-of-contents source; also an assumption filling a
-  documented gap — see the Sprint 1b PR description for the reasoning) or that one target is
-  refused with a `BuildTargetViolation`, independent of the others (BR-7). The CLI
-  (`md-publisher-cli generate <publication-dir> --targets ...`) refuses the whole Generation up
-  front if the Publication has any unresolved Structure Violation (BR-5's silent-overwrite applies
+- **Sprint 1a — Validate** (`packages/language`): the original grammar (front matter, ATX
+  headings, one link form) and Structure Violation checks for BR-1/BR-3/BR-4 — since superseded by
+  Sprint 2's grammar rewrite (BR-2 no longer applies at all, see below).
+- **Sprint 1b — Generate** (`packages/publishing`, `packages/cli`): compiles a validated
+  Publication (a directory of `.mdpub` files, chapter order = filename-alphabetical — an
+  assumption, not a sourced requirement, since no manifest/ordering format is specified anywhere in
+  the workshop docs) into DOCX, PDF, Web, and EPUB output. EPUB requires one chapter's front matter
+  to declare `toc: true` (BR-6's table-of-contents source; also an assumption filling a documented
+  gap) or that one target is refused with a `BuildTargetViolation`, independent of the others
+  (BR-7). The CLI (`md-publisher-cli generate <publication-dir> --targets ...`) refuses the whole
+  Generation up front on any unresolved Structure Violation (BR-5's silent-overwrite applies
   otherwise — no `--force` flag, no confirmation prompt, by design).
+- **Sprint 2 — CommonMark grammar expansion** (`packages/language`, `packages/publishing`): the
+  grammar was rewritten as a block/inline split (see `md-publisher.langium`'s top comment) to add
+  emphasis/strong, code spans, fenced code blocks, blockquotes (nested), lists (ordered/unordered,
+  nested one level), images, general links, thematic breaks, and hard line breaks — a founder-
+  confirmed **practical superset**, not full CommonMark spec conformance (documented
+  simplifications: heading text isn't inline-parsed, list items are single-line only, blockquotes/
+  lists don't nest inside each other). **BR-2 (front-matter position) is retired** — thematic
+  breaks made the old "recognize `---` anywhere" behavior ambiguous, so front matter is now only
+  ever *meant* to be read at document start, and there's no longer a violation to raise for a
+  misplaced one. All four generators render the full construct set (see `packages/publishing`'s
+  README for per-format detail, including where PDF and image embedding are still simplified).
+- **Sprint 3 — live diagnostics UX + PR review** (`packages/extension`, `packages/cli`): live
+  editor diagnostics themselves were already working since Sprint 1a (Langium validates on every
+  edit); Sprint 3 added the one missing piece from Feature 8's Gherkin — a status bar warning when
+  the language server disconnects, so diagnostics are never shown as current when they might be
+  stale (`packages/extension/src/extension/main.ts`). It also made BR-8 (Output Artifacts never
+  committed to source) hold structurally per Feature 10: `generate` ensures `.gitignore` excludes
+  `dist/` rather than relying on a Docs Writer remembering to (`packages/cli/src/gitignore.ts`).
 
 Still open / out of scope for Iteration 01: theming/templates (explicitly deferred), the hosted
 build service and other paid layers (open-core, not built in v1), RBAC/Zero-Trust (H15, no server
-in v1), and Sprint 2's three stories (live-typing diagnostics, PR-review workflow — VS Code
-diagnostics themselves are Sprint 1a's `md-publisher-validator.ts` and already live; Sprint 2 is
-about the surrounding workflow, not first implementing diagnostics).
+in v1), real image embedding in DOCX/PDF (currently a labeled placeholder — needs an image-asset-
+handling pass), and PDF's internal navigation (cross-references render as plain text there, an
+unchanged Sprint 1b scope note).
 
 If asked to implement a feature beyond what's described above or in the workshop docs, check with
 the user about intent before inventing new DSL/product semantics.

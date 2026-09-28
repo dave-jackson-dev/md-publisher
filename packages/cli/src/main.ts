@@ -11,6 +11,7 @@ import {
     loadPublication,
     type BuildTarget
 } from 'md-publisher-publishing';
+import { ensureOutputDirIgnored } from './gitignore.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const packagePath = path.resolve(__dirname, '..', 'package.json');
@@ -45,6 +46,9 @@ export const generateAction = async (publicationDir: string, options: { targets:
 
     const compiled = compilePublication(publication);
     const outDir = path.resolve(process.cwd(), 'dist');
+    // Feature 10 / BR-8: Output Artifacts are never committed to source, structurally — not left
+    // to a Docs Writer remembering to exclude dist/ by hand.
+    await ensureOutputDirIgnored(process.cwd(), 'dist');
     // BR-5: an existing Output Artifact at the same destination is silently overwritten — each
     // generator just writes the file, no existence check, no --force flag, no confirmation prompt.
     const outcomes = await generatePublication(compiled, targets, outDir);

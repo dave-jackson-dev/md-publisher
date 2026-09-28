@@ -1,12 +1,15 @@
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
-import type * as vscode from 'vscode';
+import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
+import { LanguageClient, State, TransportKind } from 'vscode-languageclient/node.js';
 
 let client: LanguageClient;
+let disconnectedStatusBarItem: vscode.StatusBarItem;
 
 // This function is called when the extension is activated.
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+    disconnectedStatusBarItem = createDisconnectedStatusBarItem();
+    context.subscriptions.push(disconnectedStatusBarItem);
     client = await startLanguageClient(context);
 }
 
@@ -16,6 +19,21 @@ export function deactivate(): Thenable<void> | undefined {
         return client.stop();
     }
     return undefined;
+}
+
+/**
+ * Feature 8 Scenario 3: when the language server connection is lost, the Editor must show an
+ * explicit "validation unavailable" state — never silently present a stale or absent Diagnostic
+ * as if the Document were valid. `State.Stopped` fires both on an actual disconnect and before
+ * the very first start; showing the banner in both cases is the conservative, correct choice
+ * (diagnostics genuinely aren't available yet either way) rather than trying to distinguish them.
+ */
+function createDisconnectedStatusBarItem(): vscode.StatusBarItem {
+    const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    item.text = '$(warning) Validation unavailable';
+    item.tooltip = 'md-publisher: language server disconnected. Diagnostics are stale or absent — not shown as if the Document were valid.';
+    item.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+    return item;
 }
 
 async function startLanguageClient(context: vscode.ExtensionContext): Promise<LanguageClient> {
@@ -44,6 +62,14 @@ async function startLanguageClient(context: vscode.ExtensionContext): Promise<La
         serverOptions,
         clientOptions
     );
+
+    client.onDidChangeState(event => {
+        if (event.newState === State.Stopped) {
+            disconnectedStatusBarItem.show();
+        } else if (event.newState === State.Running) {
+            disconnectedStatusBarItem.hide();
+        }
+    });
 
     // Start the client. This will also launch the server
     await client.start();
