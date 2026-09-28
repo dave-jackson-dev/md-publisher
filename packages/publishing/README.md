@@ -9,7 +9,12 @@ compiles an already-validated Publication into DOCX, PDF, EPUB, and Web output.
   `md-publisher-language`'s workspace services, and surfaces Structure Violations.
 - `src/model.ts` — compiles a validated `Document` AST into this package's own
   target-independent intermediate representation (`Chapter`/`ChapterBlock`).
-- `src/generators/` — one generator per Build Target (`docx`, `pdf`, `web`, `epub`).
+- `src/generators/` — one generator per Build Target (`docx`, `pdf`, `web`, `epub`). DOCX, Web,
+  and EPUB all give cross-references real internal navigation (Word bookmarks/hyperlinks, HTML
+  anchors, EPUB nav + cross-chapter links). PDF is the one exception: cross-references render as
+  plain link text with no clickable navigation — pdfkit's per-glyph layout makes tracking bookmark
+  positions for real internal links substantially more involved than the other three targets, and
+  no Gherkin scenario in Iteration 01 requires it (see `generators/pdf-generator.ts`'s own comment).
 - `src/generate.ts` — runs the requested Build Targets independently (BR-7): a
   `BuildTargetViolation` from one target doesn't stop the others.
 - `src/violations.ts` — `BuildTargetViolation`, distinct from a Structure Violation (which is
