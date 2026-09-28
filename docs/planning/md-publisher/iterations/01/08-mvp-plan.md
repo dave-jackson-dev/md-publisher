@@ -25,6 +25,44 @@ The Story Map already checked that Sprint 1 alone is a coherent, deliverable MVP
 adds live-typing diagnostics and the PR-review-workflow story. **Founder decision: ship the fuller
 Sprint 1 + Sprint 2 slice as v1** (10 stories) rather than the thinner Sprint-1-only release.
 
+### Finding 3: full CommonMark grammar support — founder-added 2026-09-28, after Sprint 1 shipped
+
+Not sourced from any of the nine workshops — no VPC pain, Story Map story, or Gherkin Feature
+named this. Raised directly by the founder after Sprint 1 (both sub-sprints) had already shipped:
+`.mdpub`'s grammar only covers front matter, ATX headings, and same-Publication cross-reference
+links (`packages/language/src/md-publisher.langium`, Sprint 1a). Real docs-as-code and indie-author
+content routinely needs emphasis, code spans/blocks, lists, blockquotes, images, and general links
+— none of which exist yet. **Founder decision: a practical CommonMark superset (not the full
+strict spec — no raw HTML block/inline passthrough, no reference-style link definitions, no
+precise spec-test-suite conformance target) is promoted into the v1 cut**, sequenced as its own
+sprint *before* the Story Map's Sprint 2 (live-typing diagnostics ride on top of this same grammar,
+so building them against the current, much narrower grammar would mean redoing that integration).
+
+In scope: emphasis/strong, inline code spans, fenced and indented code blocks, lists (ordered and
+unordered, nested, multi-paragraph items), blockquotes (nested), images, general links (as
+distinct from the existing same-Publication `CrossReference` construct), thematic breaks, and hard
+line breaks (as distinct from the existing soft line break, see the Sprint 1b fix in
+`packages/language/src/md-publisher.langium`).
+
+**A real architectural consequence, not a superficial add:** the current grammar is a deliberately
+*flat* sequence of elements (see that file's own top comment) — a choice made specifically because
+full nested inline Markdown modeling is complex, and Sprint 1a's scope (headings, front matter,
+one link form) never needed nesting. Lists containing paragraphs containing emphasis containing
+code spans, and arbitrarily nested blockquotes, cannot be represented flat. This sprint replaces
+the flat `Document.elements` design with a properly nested block/inline grammar — see
+`10-sprint-2-grammar-plan.md` for the task breakdown, including the point estimate (roughly double
+Sprint 1's total) and the resulting BR-2 consequence below.
+
+**A real, founder-resolved design tension:** CommonMark's thematic-break syntax (`---`/`***`/`___`
+alone on a line, anywhere in the document) collides with the front-matter fence syntax Sprint 1a
+built, which was deliberately recognized *anywhere* in the document (not only at the start) so
+BR-2 could flag a misplaced front-matter block as a Structure Violation. **Founder decision
+2026-09-28: front matter is recognized only at document start**, matching how every other
+docs-as-code tool (Jekyll, Hugo, remark-frontmatter) resolves this same ambiguity. Consequence,
+stated plainly rather than glossed over: **BR-2 is retired as a meaningful check** — a `---`-fenced
+block anywhere other than the very start of a Document is no longer recognized as an attempted
+(misplaced) front matter block at all, just a thematic break. BR-1, BR-3, and BR-4 are unaffected.
+
 ## Hypothesis Register reconciliation (H1–H16)
 
 | ID | Still testable by a v1 story? | How |
@@ -52,13 +90,23 @@ layer not yet in scope), not a scope cut that dropped a story meant to test it. 
 exception — not untestable, but **contradicted** by an unreconciled scope drift, which is Finding 1
 above and needs a founder decision, not a testability note.
 
-## v1 cut — founder-confirmed 2026-09-27
+## v1 cut — founder-confirmed 2026-09-27, amended 2026-09-28 (Finding 3)
 
 **All of Sprint 1 and Sprint 2 from `03-user-story-map.md` (10 of 10 stories), Web included as a
-fourth build target alongside DOCX, PDF, and EPUB.** Sprint 3 stays empty — no stories exist there
-to cut or defer (already established at the Story Map workshop).
+fourth build target alongside DOCX, PDF, and EPUB, plus the CommonMark grammar expansion from
+Finding 3.** Sprint 3 stays empty — no stories exist there to cut or defer (already established at
+the Story Map workshop).
+
+**Execution sequencing note (not a Story Map edit):** `03-user-story-map.md` itself is an
+unmodified historical workshop record — its "Sprint 1"/"Sprint 2"/"Sprint 3" labels stay as
+originally written. For *execution* purposes only, Finding 3's grammar work is sequenced between
+them: Sprint 1 (shipped) → **Sprint 2 — Grammar Expansion** (Finding 3, new) →
+**Sprint 3 — live-typing diagnostics + PR review** (the Story Map's original "Sprint 2", renumbered
+for execution only because it now comes third) → the Story Map's "Sprint 3" backlog note (templates/
+theming) remains unscheduled, as before.
 
 **Walking Skeleton coherence:** the proposed cut is a real, usable end-to-end path — install →
 write with build-time and live validation → generate multi-format output that opens/renders
 cleanly → review a PR without wading through build artifacts. Not a set of individually-justified
-stories with no coherent whole.
+stories with no coherent whole. Finding 3's grammar expansion strengthens this path (real documents
+use more than headings and plain paragraphs) without changing its shape.

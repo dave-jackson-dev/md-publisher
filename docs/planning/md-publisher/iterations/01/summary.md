@@ -161,3 +161,21 @@ transcript at
   next stage is `start-provision-environment` (standing up the dev/CI scaffold Sprint 1 assumes),
   **not** the iteration closing — `stop-mvp-iteration` stays open through Provision Environment and
   actual Scrum Sprint execution.
+
+## Post-workshop: Sprint 1 executed, Sprint 2 (Grammar Expansion) added
+
+Not a tenth workshop — this iteration's canonical workshop sequence is still the nine above. Two
+things happened after Workshop 9 that a fast reader of this file needs to know about:
+
+- **Sprint 1 (1a + 1b, all 44 points) was implemented and merged to `dev`**, without
+  `start-provision-environment` running first (no CI is configured) — a deliberate sequencing
+  choice, not an oversight; see the hand-off memory / PRs #11–#13 for detail.
+- **Founder-added scope, 2026-09-28: full CommonMark grammar support**, not sourced from any of
+  the nine workshops. Recorded as Finding 3 in [`08-mvp-plan.md`](./08-mvp-plan.md) (amending the
+  v1 cut) and planned in [`10-sprint-2-grammar-plan.md`](./10-sprint-2-grammar-plan.md) (85 points,
+  split 2a/"Parse" + 2b/"Render" — roughly double Sprint 1's entire size, flagged as a real
+  velocity risk in that doc rather than downplayed). Retires BR-2 as a meaningful check (front
+  matter is now recognized only at document start, to disambiguate it from CommonMark thematic
+  breaks) — a founder-confirmed consequence, not a bug. Sequenced *before* the Story Map's own
+  "Sprint 2" (live-typing diagnostics + PR review), which becomes Sprint 3 for execution purposes
+  only — `03-user-story-map.md` itself is unmodified.
