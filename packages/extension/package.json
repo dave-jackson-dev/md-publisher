@@ -1,14 +1,26 @@
 {
     "name": "vscode-md-publisher",
-    "description": "The extension specific package",
+    "description": "Build-time structural validation for .mdpub documents — broken cross-references, out-of-order front matter, and heading-level skips flagged as you type.",
     "version": "0.0.1",
     "displayName": "md-publisher",
     "type": "module",
+    "publisher": "TODO-set-marketplace-publisher-id",
+    "license": "MIT",
+    "icon": "resources/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dave-jackson-dev/md-publisher.git",
+        "directory": "packages/extension"
+    },
+    "bugs": {
+        "url": "https://github.com/dave-jackson-dev/md-publisher/issues"
+    },
     "engines": {
         "vscode": "^1.67.0"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Linters"
     ],
     "contributes": {
         "languages": [{
@@ -28,12 +40,14 @@
     ],
     "main": "./out/extension/main.cjs",
     "scripts": {
-        "clean": "shx rm -fr *.tsbuildinfo out syntaxes",
+        "clean": "shx rm -fr *.tsbuildinfo out syntaxes LICENSE",
         "vscode:prepublish": "npm run build",
-        "build:prepare": "shx mkdir -p ./syntaxes/ && shx cp -f ../language/syntaxes/md-publisher.tmLanguage.json ./syntaxes/md-publisher.tmLanguage.json",
+        "build:prepare": "shx mkdir -p ./syntaxes/ && shx cp -f ../language/syntaxes/md-publisher.tmLanguage.json ./syntaxes/md-publisher.tmLanguage.json && shx cp -f ../../LICENSE ./LICENSE",
         "build": "npm run build:prepare && tsc -b tsconfig.json && node esbuild.mjs",
         "build:clean": "npm run clean && npm run build",
-        "watch": "npm run build:prepare && concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\""
+        "watch": "npm run build:prepare && concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
+        "package": "vsce package",
+        "publish": "vsce publish"
     },
     "dependencies": {
         "md-publisher-language": "0.0.1",
@@ -42,6 +56,7 @@
     },
     "devDependencies": {
         "@types/vscode": "~1.67.0",
+        "@vscode/vsce": "~4.0.0",
         "concurrently": "~8.2.1",
         "esbuild": "~0.25.5"
     },

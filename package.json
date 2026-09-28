@@ -4,6 +4,11 @@
   "version": "0.0.1",
   "type": "module",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dave-jackson-dev/md-publisher.git"
+  },
   "scripts": {
     "clean": "npm run clean --workspaces",
     "watch": "tsc -b tsconfig.build.json --watch",

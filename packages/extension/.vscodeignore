@@ -1,2 +1,11 @@
 .vscode/**
 .vscode-test/**
+src/**
+out/**/*.map
+tsconfig*.json
+tsconfig*.tsbuildinfo
+esbuild.mjs
+langium-quickstart.md
+**/*.ts
+!**/*.d.ts
+.gitignore
