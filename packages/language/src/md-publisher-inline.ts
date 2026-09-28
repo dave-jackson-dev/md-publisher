@@ -83,7 +83,7 @@ export function parseInline(raw: string): InlineNode[] {
 
         if (ch === '`') {
             const tickRun = matchRun(raw, position, '`');
-            const closeAt = raw.indexOf('`'.repeat(tickRun), position + tickRun);
+            const closeAt = findClosingBacktickRun(raw, position + tickRun, tickRun);
             if (closeAt !== -1) {
                 flushText(position);
                 let content = raw.slice(position + tickRun, closeAt);
@@ -130,6 +130,29 @@ function matchRun(raw: string, start: number, char: string): number {
         end += 1;
     }
     return end - start;
+}
+
+/**
+ * CommonMark code spans close on the next backtick run of *exactly* the same length as the
+ * opener — a run of a different length is literal content, not a delimiter, and must be skipped
+ * over rather than treated as a (wrong) match. Without this, an opener of length 1 would
+ * incorrectly match against the first backtick of an unrelated longer run (e.g. a ``` fence
+ * mentioned in prose) instead of continuing on to the real closing single backtick.
+ */
+function findClosingBacktickRun(raw: string, from: number, length: number): number {
+    let i = from;
+    while (i < raw.length) {
+        if (raw[i] === '`') {
+            const runLength = matchRun(raw, i, '`');
+            if (runLength === length) {
+                return i;
+            }
+            i += runLength;
+        } else {
+            i += 1;
+        }
+    }
+    return -1;
 }
 
 function shiftNode(node: InlineNode, offset: number): InlineNode {
