@@ -123,3 +123,21 @@ mockups at [`mockups/cli-output.svg`](./mockups/cli-output.svg) and
   missed that Feature 6 also has a "refused" scenario. Fixed with a scenario-level table covering
   every scenario across all 10 Features.
 - No new hypothesis. All sixteen (H1–H16) carry forward to MVP Planning.
+
+## Workshop 8 — MVP Planning
+
+**Status: complete**, accepted 2026-09-27. See [`08-mvp-plan.md`](./08-mvp-plan.md), transcript at
+[`transcripts/08-mvp-planning.transcript.md`](./transcripts/08-mvp-planning.transcript.md).
+
+- **Full Hypothesis Register reconciliation (H1–H16):** no silent strand. 10 entries testable by a
+  v1 story; H4 resolved (not stranded) via a founder decision; H5/H8/H9/H10/H15 explicitly marked
+  not-testable-this-iteration-by-design, each with a stated reason.
+- **Real finding: a drifted build target.** BMC's H4 named DOCX/PDF/EPUB; the VPC (Workshop 2)
+  had already introduced "Web" as a fourth target for Docs Writer, never reconciled until this
+  workshop caught it. **Founder decision: Web kept as a real fourth v1 target**, H4 revised in
+  `01-bmc.md`'s register.
+  **v1 build targets are now DOCX, PDF, EPUB, and Web.**
+- **Scope decision: full Sprint 1 + Sprint 2 ships as v1** (10 of 10 Story Map stories), not the
+  thinner Sprint-1-only option the Story Map's own MVP Slice check made available.
+- v1 cut confirmed as a real, coherent walking skeleton, not an incoherent bundle of individually
+  justified stories.
