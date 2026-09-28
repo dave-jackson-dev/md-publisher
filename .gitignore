@@ -4,11 +4,23 @@
 !.vscode/tasks.json
 node_modules/
 dist/
+# Exception: examples/user-guide/dist is committed on purpose, as real generated output
+# demonstrating live usage — see examples/README.md.
+!examples/user-guide/dist/
+!examples/user-guide/dist/**
+# `md-publisher-cli generate` (packages/cli/src/gitignore.ts) auto-creates a plain "dist/" entry
+# here the first time it's run in this directory, which — being a more deeply nested .gitignore —
+# would otherwise take precedence over the negation above and silently re-ignore the checked-in
+# output. Excluded so that auto-generated file never gets committed; if you run the example's own
+# reproduce command locally, delete the local examples/user-guide/.gitignore it creates before
+# `git add`-ing anything there, or the dist/ exception above won't take effect for you either.
+examples/user-guide/.gitignore
 out/
 **/src/generated
 syntaxes/
 *.tsbuildinfo
 *.vsix
+packages/extension/LICENSE
 
 
 
@@ -18,3 +30,9 @@ syntaxes/
 .nx/polygraph
 .claude/worktrees
 .claude/settings.local.json
+
+# Lean-Agile MVP workspace. project.json IS tracked: being a marked project is a fact about the
+# repo and should survive a clone. Everything else under .mvp/ is local app state (mutated by
+# every mvp query, not just writes) and must stay machine-local.
+.mvp/*
+!.mvp/project.json

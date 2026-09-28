@@ -1,17 +1,48 @@
-# Command-line interface (CLI)
+# md-publisher-cli
 
-Check [this part](https://langium.org/docs/learn/minilogo/customizing_cli/) of the Langium Minilogo Tutorial as a useful guide to the CLI.
+Validate a `.mdpub` Publication and generate DOCX, PDF, EPUB, and Web output from one source with
+one command.
+
+## Install
+
+```bash
+npm install -g md-publisher-cli
+```
+
+Requires Node.js 20.10.0 or newer.
+
+## Usage
+
+A Publication is a directory of `.mdpub` Documents. Chapter order is filename-alphabetical (e.g.
+`01-intro.mdpub`, `02-setup.mdpub`, ...).
+
+```bash
+md-publisher-cli generate <publication-dir> --targets docx,pdf,web,epub
+```
+
+- `--targets` is a comma-separated list of `docx`, `pdf`, `web`, `epub`. Defaults to all four.
+- `.mdpub` supports a practical superset of CommonMark: headings, paragraphs, emphasis/strong,
+  code spans, fenced code blocks, blockquotes (nested), lists (ordered/unordered, nested one
+  level), images, links, cross-references (`[text](#anchor)`, resolved within the Publication),
+  and thematic breaks. See [packages/language](../language/README.md) for exactly what's in and
+  out of scope.
+- Output is written to `./dist` (relative to the current directory): `dist/<name>.docx`,
+  `dist/<name>.pdf`, `dist/<name>.epub`, and `dist/<name>/` for Web. An existing artifact at the
+  same path is silently overwritten. The CLI also ensures `./.gitignore` excludes `dist/`
+  (creating or appending to it if needed) so a generated artifact is never accidentally committed.
+- If the Publication has any unresolved Structure Violation (a broken cross-reference, an
+  ambiguous heading anchor, or a heading-level skip), generation is refused entirely — no output
+  is produced for any target. Fix the violation and run again.
+- EPUB additionally requires one chapter's front matter to declare `toc: true` (its
+  table-of-contents source). Without it, EPUB generation alone is skipped with a
+  Build-Target Violation; the other requested targets are unaffected.
 
 ## What's in the folder?
 
-- [package.json](./package.json) - The manifest file of your cli package.
-- [tsconfig.src.json](./tsconfig.src.json) - The package specific TypeScript compiler configuration extending the [base config](../../tsconfig.json).
-- [tsconfig.json](./tsconfig.json) - TypeScript compiler configuration options required for proper functionality of VSCode.
-- [bin/cli.js](bin/cli/cli.js) - Script referenced in the [package.json](./package.json) and used to execute the command-line interface.
-- [src/cli/main.ts](src/cli/main.ts) - The entry point of the command line interface (CLI) of your language.
-- [src/cli/generator.ts](src/cli/generator.ts) - The code generator used by the CLI to write output files from DSL documents.
-- [src/cli/util.ts](src/cli/util.ts) - Utility code for the CLI.
+- [package.json](./package.json) — the CLI package manifest.
+- [bin/cli.js](./bin/cli.js) — the executable entry point.
+- [src/main.ts](./src/main.ts) — the CLI's command definitions and `generate` action.
 
-## Instructions
-
-Run `node ./bin/cli` to see options for the CLI; `node ./bin/cli generate <file>` generates code for a given DSL file.
+Generation itself (compiling a validated Publication into DOCX/PDF/EPUB/Web) lives in
+[packages/publishing](../publishing/README.md), the Publishing bounded context this CLI is a thin
+wrapper over. Validation is [packages/language](../language/README.md)'s.

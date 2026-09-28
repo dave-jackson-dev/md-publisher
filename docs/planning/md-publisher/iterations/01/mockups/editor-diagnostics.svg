@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 640" font-family="Menlo, Consolas, monospace">
+  <rect width="860" height="640" fill="#f5f5f5"/>
+
+  <!-- State 1: Diagnostic shown -->
+  <text x="20" y="24" font-size="14" fill="#333" font-weight="bold">State: Diagnostic shown (Feature 8, Scenario "Typing a broken cross-reference")</text>
+  <rect x="20" y="34" width="500" height="220" fill="#1e1e1e"/>
+  <rect x="20" y="34" width="500" height="24" fill="#2d2d2d"/>
+  <text x="32" y="51" font-size="12" fill="#cccccc">guide.mdpub</text>
+
+  <!-- gutter -->
+  <rect x="20" y="58" width="30" height="196" fill="#1e1e1e"/>
+  <text x="32" y="78" font-size="12" fill="#6e7681">1</text>
+  <text x="32" y="98" font-size="12" fill="#6e7681">2</text>
+  <text x="32" y="118" font-size="12" fill="#6e7681">3</text>
+  <text x="32" y="138" font-size="12" fill="#6e7681">4</text>
+  <text x="32" y="158" font-size="12" fill="#6e7681">5</text>
+
+  <text x="58" y="78" font-size="13" fill="#d4d4d4"># Chapter One</text>
+  <text x="58" y="98" font-size="13" fill="#d4d4d4"></text>
+  <text x="58" y="118" font-size="13" fill="#d4d4d4">See <tspan fill="#569cd6">[Setup]</tspan><tspan fill="#569cd6">(#setup)</tspan> for prerequisites.</text>
+
+  <!-- red squiggly under (#setup) -->
+  <path d="M 118 122 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3"
+        stroke="#f14c4c" stroke-width="1.5" fill="none"/>
+
+  <!-- hover tooltip -->
+  <rect x="118" y="130" width="330" height="46" rx="4" fill="#252526" stroke="#454545"/>
+  <text x="128" y="148" font-size="11" fill="#f14c4c">Structure Violation</text>
+  <text x="128" y="164" font-size="11" fill="#d4d4d4">Heading "#setup" not found in this Publication</text>
+
+  <text x="58" y="200" font-size="13" fill="#d4d4d4">## Prerequisites</text>
+
+  <!-- Problems panel -->
+  <rect x="20" y="258" width="500" height="60" fill="#252526"/>
+  <text x="30" y="276" font-size="11" fill="#cccccc" font-weight="bold">PROBLEMS (1)</text>
+  <text x="30" y="296" font-size="11" fill="#f14c4c">✗ guide.mdpub:3  Structure Violation: heading "#setup" not found</text>
+
+  <!-- State 2: Diagnostic cleared live -->
+  <text x="20" y="352" font-size="14" fill="#333" font-weight="bold">State: Cleared live (Feature 8, Scenario "Fixing a flagged error live")</text>
+  <rect x="20" y="362" width="500" height="130" fill="#1e1e1e"/>
+  <rect x="20" y="362" width="500" height="24" fill="#2d2d2d"/>
+  <text x="32" y="379" font-size="12" fill="#cccccc">guide.mdpub</text>
+  <rect x="20" y="386" width="30" height="106" fill="#1e1e1e"/>
+  <text x="32" y="406" font-size="12" fill="#6e7681">1</text>
+  <text x="32" y="426" font-size="12" fill="#6e7681">2</text>
+  <text x="32" y="446" font-size="12" fill="#6e7681">3</text>
+  <text x="58" y="406" font-size="13" fill="#d4d4d4"># Chapter One</text>
+  <text x="58" y="446" font-size="13" fill="#d4d4d4">See <tspan fill="#569cd6">[Setup]</tspan><tspan fill="#569cd6">(#setup)</tspan> for prerequisites.</text>
+  <text x="58" y="466" font-size="13" fill="#4ec9b0">## Setup</text>
+  <text x="30" y="502" font-size="11" fill="#4ec9b0">No problems — Diagnostic cleared without a file save</text>
+
+  <!-- State 3: Language server unavailable -->
+  <text x="20" y="558" font-size="14" fill="#333" font-weight="bold">State: Validation unavailable (Feature 8, Scenario "The language server becomes unavailable")</text>
+  <rect x="20" y="568" width="500" height="56" fill="#1e1e1e"/>
+  <rect x="20" y="568" width="500" height="26" fill="#5a3d00"/>
+  <text x="30" y="586" font-size="12" fill="#ffcc66">⚠ Validation unavailable — language server disconnected</text>
+  <text x="30" y="612" font-size="11" fill="#808080">Diagnostics are stale/absent — not shown as if the Document were valid</text>
+
+  <!-- Interaction notes -->
+  <text x="540" y="24" font-size="13" fill="#333" font-weight="bold">Interaction notes</text>
+  <text x="540" y="46" font-size="12" fill="#444">Triggered by (When): editing a .mdpub file with the</text>
+  <text x="540" y="62" font-size="12" fill="#444">extension active (Feature 8, 9).</text>
+  <text x="540" y="86" font-size="12" fill="#444">State 1: broken Cross-Reference typed → inline</text>
+  <text x="540" y="102" font-size="12" fill="#444">squiggle + hover Diagnostic + Problems panel entry.</text>
+  <text x="540" y="126" font-size="12" fill="#444">State 2: heading added matching the reference →</text>
+  <text x="540" y="142" font-size="12" fill="#444">Diagnostic clears without a save (live).</text>
+  <text x="540" y="166" font-size="12" fill="#444">State 3: LSP connection lost → explicit banner,</text>
+  <text x="540" y="182" font-size="12" fill="#444">never a silent stale-clean state.</text>
+  <text x="540" y="206" font-size="12" fill="#444">Indie Author (Feature 9) sees the identical surface</text>
+  <text x="540" y="222" font-size="12" fill="#444">for a heading-skip violation — not mocked separately,</text>
+  <text x="540" y="238" font-size="12" fill="#444">per Domain Storytelling's shared-flow note.</text>
+  <text x="540" y="262" font-size="12" fill="#444">From here: fix inline (stays here), or run generate</text>
+  <text x="540" y="278" font-size="12" fill="#444">from a terminal (→ screen 1) — see the screen-flow</text>
+  <text x="540" y="294" font-size="12" fill="#444">diagram in 07-ux-design.md.</text>
+</svg>

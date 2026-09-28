@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 760" font-family="Menlo, Consolas, monospace">
+  <rect width="860" height="760" fill="#f5f5f5"/>
+
+  <!-- State 1: Success -->
+  <text x="20" y="24" font-size="14" fill="#333" font-weight="bold">State: Success (Feature 5, Scenario "Generating all three Build Targets")</text>
+  <rect x="20" y="34" width="820" height="150" rx="8" fill="#1e1e1e"/>
+  <circle cx="40" cy="52" r="6" fill="#ff5f56"/>
+  <circle cx="60" cy="52" r="6" fill="#ffbd2e"/>
+  <circle cx="80" cy="52" r="6" fill="#27c93f"/>
+  <text x="40" y="82" font-size="14" fill="#d4d4d4">$ md-publisher-cli generate user-guide --targets docx,pdf,web</text>
+  <text x="40" y="106" font-size="14" fill="#4ec9b0">✓ dist/user-guide.docx</text>
+  <text x="40" y="128" font-size="14" fill="#4ec9b0">✓ dist/user-guide.pdf</text>
+  <text x="40" y="150" font-size="14" fill="#4ec9b0">✓ dist/user-guide/ (web)</text>
+  <text x="40" y="172" font-size="13" fill="#808080">3 Build Targets generated from 3 Documents, 0 Structure Violations.</text>
+
+  <!-- State 2: Structure Violation refusal -->
+  <text x="20" y="214" font-size="14" fill="#333" font-weight="bold">State: Refused (Feature 5, Scenario "Generation refused on an unresolved Structure Violation")</text>
+  <rect x="20" y="224" width="820" height="150" rx="8" fill="#1e1e1e"/>
+  <circle cx="40" cy="242" r="6" fill="#ff5f56"/>
+  <circle cx="60" cy="242" r="6" fill="#ffbd2e"/>
+  <circle cx="80" cy="242" r="6" fill="#27c93f"/>
+  <text x="40" y="272" font-size="14" fill="#d4d4d4">$ md-publisher-cli generate user-guide --targets docx,pdf,web</text>
+  <text x="40" y="296" font-size="14" fill="#f14c4c">✗ Structure Violation in chapter-2.mdpub</text>
+  <text x="40" y="318" font-size="13" fill="#f14c4c">  Cross-Reference "#setup" does not match any heading in the Publication</text>
+  <text x="40" y="340" font-size="13" fill="#808080">No Output Artifact was produced. Fix the violation and run again.</text>
+  <text x="40" y="360" font-size="12" fill="#606060">exit code 1</text>
+
+  <!-- State 3: Build-Target Violation, partial success -->
+  <text x="20" y="404" font-size="14" fill="#333" font-weight="bold">State: Partial (Feature 6, Scenario "EPUB-specific structural requirement missing")</text>
+  <rect x="20" y="414" width="820" height="170" rx="8" fill="#1e1e1e"/>
+  <circle cx="40" cy="432" r="6" fill="#ff5f56"/>
+  <circle cx="60" cy="432" r="6" fill="#ffbd2e"/>
+  <circle cx="80" cy="432" r="6" fill="#27c93f"/>
+  <text x="40" y="462" font-size="14" fill="#d4d4d4">$ md-publisher-cli generate field-notes --targets epub,pdf</text>
+  <text x="40" y="486" font-size="14" fill="#e5c07b">✗ Build-Target Violation: epub</text>
+  <text x="40" y="508" font-size="13" fill="#e5c07b">  No chapter is marked as the table-of-contents source</text>
+  <text x="40" y="530" font-size="14" fill="#4ec9b0">✓ dist/field-notes.pdf</text>
+  <text x="40" y="552" font-size="13" fill="#808080">1 of 2 Build Targets produced. epub failed independently of pdf (BR-7).</text>
+  <text x="40" y="572" font-size="12" fill="#606060">exit code 1</text>
+
+  <!-- Interaction notes -->
+  <text x="20" y="616" font-size="13" fill="#333" font-weight="bold">Interaction notes</text>
+  <text x="20" y="638" font-size="12" fill="#444">Triggered by (When): "md-publisher-cli generate &lt;publication&gt; --targets ..." (Features 3, 5, 6).</text>
+  <text x="20" y="656" font-size="12" fill="#444">State 1 satisfies Feature 5's "an OutputArtifact is produced for each of the three Build Targets."</text>
+  <text x="20" y="674" font-size="12" fill="#444">State 2 satisfies Feature 5's "the Generator refuses ... the Structure Violation is reported instead."</text>
+  <text x="20" y="692" font-size="12" fill="#444">State 3 satisfies Feature 6's "a BuildTargetViolation is raised for Epub ... the Pdf OutputArtifact is still produced."</text>
+  <text x="20" y="714" font-size="12" fill="#444">From here: fix the Document and re-run (loops back to this screen), or open the Editor (screen 2) to see the</text>
+  <text x="20" y="732" font-size="12" fill="#444">same violation live — see 07-ux-design.md's screen-flow diagram.</text>
+</svg>

@@ -1,8 +1,28 @@
 {
     "name": "md-publisher-cli",
-    "description": "The cli specific package",
+    "description": "Validate a .mdpub Publication and generate DOCX, PDF, EPUB, and Web output from one source with one command.",
     "version": "0.0.1",
     "type": "module",
+    "license": "MIT",
+    "keywords": [
+        "markdown",
+        "docs-as-code",
+        "publishing",
+        "docx",
+        "pdf",
+        "epub",
+        "cli"
+    ],
+    "author": "Dave Jackson",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dave-jackson-dev/md-publisher.git",
+        "directory": "packages/cli"
+    },
+    "bugs": {
+        "url": "https://github.com/dave-jackson-dev/md-publisher/issues"
+    },
+    "homepage": "https://github.com/dave-jackson-dev/md-publisher#readme",
     "engines": {
         "node": ">=20.10.0",
         "npm": ">=10.2.3"
@@ -18,11 +38,15 @@
     "scripts": {
         "clean": "shx rm -fr *.tsbuildinfo out",
         "build": "echo 'No build step'",
-        "build:clean": "npm run clean && npm run build"
+        "build:clean": "npm run clean && npm run build",
+        "test": "vitest run"
     },
     "dependencies": {
-        "md-publisher-language": "0.0.1",
+        "md-publisher-publishing": "0.0.1",
         "chalk": "~5.3.0",
         "commander": "~11.1.0"
+    },
+    "devDependencies": {
+        "vitest": "~3.1.3"
     }
 }

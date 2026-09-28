@@ -1,0 +1,174 @@
+# Syntax Reference
+
+Every construct md-publisher understands, with its raw syntax shown as a code block followed by
+what it actually renders as. See [Setup](#setup) if you have not installed the CLI yet, or the
+[project README](https://github.com/dave-jackson-dev/md-publisher#readme) for the exact scope
+(a practical CommonMark superset, not the full spec).
+
+## Headings
+
+Syntax:
+
+```
+# Heading level 1
+## Heading level 2
+###### Heading level 6 (the deepest level supported)
+```
+
+Every heading in this Publication (including this one) is a live example — headings are not
+inline-parsed, so emphasis or links inside heading text are not supported.
+
+## Paragraphs and Line Breaks
+
+Syntax:
+
+```
+A paragraph is one or more lines with no blank line between them.
+A soft-wrapped second line like this one joins the first with a single space.
+
+A blank line starts a new paragraph.
+
+End a line with a trailing backslash\
+or two or more trailing spaces to force a hard line break within one paragraph.
+```
+
+Output: this sentence is deliberately
+wrapped onto a second source line with no blank line in between, and renders as one paragraph
+joined by a space, not two.
+
+This is a new paragraph, started only because a blank line came before it.
+
+This line ends with a trailing backslash\
+so the text after it starts on its own line, within the same paragraph as the line above.
+
+## Emphasis and Strong
+
+Syntax:
+
+```
+*emphasis* or _emphasis_
+**strong** or __strong__
+```
+
+Output: *emphasis*, _emphasis_ (the same thing, two spellings), **strong**, __strong__ (also the
+same thing, two spellings).
+
+## Code Spans
+
+Syntax:
+
+```
+Use `inline code` like this, for a variable name or a short command.
+```
+
+Output: use `inline code` like this, for a variable name or a short command.
+
+## Fenced Code Blocks
+
+Syntax (shown here inside a `~~~`-fenced block so the ` ``` ` fence itself can appear literally):
+
+~~~
+```js
+const x = 1;
+console.log(x);
+```
+~~~
+
+Output:
+
+```js
+const x = 1;
+console.log(x);
+```
+
+The language after the opening fence (`js` above) is optional and carried through as a CSS class
+on Web/EPUB output for syntax-highlighting tools to key off; DOCX and PDF render the content in a
+monospace font regardless of language.
+
+## Blockquotes
+
+Syntax:
+
+```
+> A blockquote line.
+> A second line joins the first as one paragraph inside the quote.
+
+>> A nested quote (one more leading ">" per level).
+```
+
+Output:
+
+> A blockquote line.
+> A second line joins the first as one paragraph inside the quote.
+
+>> A nested quote — one level deeper than the one above.
+
+## Lists
+
+Syntax:
+
+```
+- An unordered item
+- Another item
+  - A nested item (indent it under the item it belongs to)
+- Back at the outer level
+
+1. An ordered item
+2. Another ordered item
+```
+
+Output:
+
+- An unordered item
+- Another item
+  - A nested item
+- Back at the outer level
+
+1. An ordered item
+2. Another ordered item
+
+Note: a list item's own content is always exactly one line — there is no continuation-line support
+for a single item spanning multiple paragraphs.
+
+## Images
+
+Syntax:
+
+```
+![A short diagram](diagram.png)
+```
+
+Output: ![A short diagram](diagram.png)
+
+Image *syntax* is fully supported everywhere above, but embedding the actual file is not finished
+yet: Web/EPUB reference the path as written (broken unless you copy the file alongside the output
+yourself), and DOCX/PDF currently render a `[Image: alt text]` placeholder instead of the picture.
+
+## Links and Cross-References
+
+Syntax:
+
+```
+[An external link](https://example.com)
+[A cross-reference to a heading in this Publication](#setup)
+```
+
+Output: [an external link](https://example.com) goes anywhere on the web with no validation.
+[Setup](#setup) is a cross-reference — md-publisher checks at build time (and live, as you type)
+that a heading named "Setup" actually exists somewhere in the Publication, and refuses to generate
+any output at all if it does not.
+
+## Thematic Breaks
+
+Syntax:
+
+```
+---
+```
+
+(`***` and `___` work identically.) Output, immediately below this paragraph:
+
+---
+
+See [Introduction](#introduction) to start over, or [Advanced Topics](#advanced-topics) for how
+Structure Violations and the EPUB table-of-contents marker work.
