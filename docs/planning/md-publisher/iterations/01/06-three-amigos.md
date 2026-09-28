@@ -129,6 +129,11 @@ Feature: Have Broken Internal Links Flagged at Build Time
   So that, I never hand a reader an EPUB with a dead link
 
   Scenario: A Publication with front matter placed after content
+    # Retired 2026-09-28, founder-confirmed (08-mvp-plan.md's Finding 3, BR-2) — once CommonMark
+    # thematic breaks exist, front matter is recognized only at document start, so this scenario's
+    # "front matter" no longer parses as front matter at all once it's past the top of the file;
+    # it's a thematic break and plain content instead, and no Structure Violation is raised. Left
+    # here, annotated, rather than deleted, as a record of what this scenario tested and why.
     Given a Document "chapter-1.mdpub" whose "title: Chapter One" front matter appears after its
       first paragraph of content, instead of at the top of the file
     When the GrammarEngine parses the Document

@@ -66,7 +66,10 @@ missing / out of order):**
 - **BR-1 (missing):** A Cross-Reference to a nonexistent Document or heading is always a Structure
   Violation — never a warning, never silently ignored.
 - **BR-2 (out of order):** A Document's front matter must appear before any content; a Structure
-  Violation is raised if it does not.
+  Violation is raised if it does not. **Retired 2026-09-28, founder-confirmed** — see
+  `08-mvp-plan.md`'s Finding 3: once CommonMark thematic breaks exist, front matter is recognized
+  only at document start (matching ecosystem convention), so this Structure Violation can no longer
+  actually fire. Left here rather than deleted, as a record of what BR-2 was and why it changed.
 - **BR-3 (out of order):** Heading levels may not skip a level (e.g. H1 directly to H3) — raised as
   a Structure Violation.
 - **BR-4 (already taken):** Two headings that would produce the same cross-reference anchor is a
