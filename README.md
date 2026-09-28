@@ -45,6 +45,11 @@ Try the CLI against a directory of `.mdpub` files:
 node packages/cli/bin/cli.js generate <publication-dir> --targets docx,pdf,web,epub
 ```
 
+**[examples/](./examples/)** has a real three-chapter Publication with its actual generated DOCX,
+PDF, EPUB, and Web output checked in — open them directly to see what `generate` produces, or
+follow the example's README to reproduce them yourself and to see a Structure Violation refuse a
+build.
+
 To try the VS Code extension: open this folder in VS Code and press `F5` to launch an Extension
 Development Host, then open a `.mdpub` file.
 

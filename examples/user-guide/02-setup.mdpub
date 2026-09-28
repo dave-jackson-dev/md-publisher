@@ -1,0 +1,7 @@
+## Setup
+
+Install md-publisher-cli globally with npm, then create a Publication: a directory of mdpub files, numbered so their filenames sort into the chapter order you want.
+
+Run the generate command against that directory, naming the Build Targets you want. Output is written to a dist folder next to where you ran the command.
+
+See [Introduction](#introduction) for the big picture, or continue to [Advanced Topics](#advanced-topics).

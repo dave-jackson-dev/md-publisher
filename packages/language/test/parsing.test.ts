@@ -28,35 +28,52 @@ describe('Parsing tests', () => {
     });
 
     test('parses a cross-reference embedded in prose', async () => {
+        // Trailing "\n" is a single line break (SOFT_BREAK), its own PlainRun — see the
+        // dedicated soft-break/paragraph-break tests below for why that matters.
         const document = await parseDocument('See [Setup](#setup) for prerequisites.\n');
         const types = document.parseResult.value.elements.map(e => e.$type);
-        expect(types).toEqual(['PlainRun', 'CrossReference', 'PlainRun']);
+        expect(types).toEqual(['PlainRun', 'CrossReference', 'PlainRun', 'PlainRun']);
         const crossRef = document.parseResult.value.elements[1];
         expect((crossRef as { raw: string }).raw).toBe('[Setup](#setup)');
     });
 
     test('does not treat a mid-line "#" as a heading', async () => {
         const document = await parseDocument('This costs C# five dollars.\n');
-        expect(document.parseResult.value.elements).toHaveLength(1);
-        expect(document.parseResult.value.elements[0].$type).toBe('PlainRun');
+        const types = document.parseResult.value.elements.map(e => e.$type);
+        expect(types).toEqual(['PlainRun', 'PlainRun']);
     });
 
     test('parses front matter as its own element', async () => {
+        // The blank line between the closing "---" and the heading is its own
+        // ParagraphBreak, distinct from the single trailing line break after the heading.
         const document = await parseDocument('---\ntitle: Chapter One\n---\n\n# Chapter One\n');
         const types = document.parseResult.value.elements.map(e => e.$type);
-        expect(types).toEqual(['FrontMatter', 'Heading']);
+        expect(types).toEqual(['FrontMatter', 'ParagraphBreak', 'Heading', 'PlainRun']);
     });
 
     test('recognizes front matter wherever it appears, not only at the top', async () => {
         const document = await parseDocument('Some content first.\n---\ntitle: Chapter One\n---\n');
         const types = document.parseResult.value.elements.map(e => e.$type);
-        expect(types).toEqual(['PlainRun', 'FrontMatter']);
+        expect(types).toEqual(['PlainRun', 'PlainRun', 'FrontMatter', 'PlainRun']);
     });
 
     test('parses a heading level skip without erroring', async () => {
         const document = await parseDocument('# Chapter Two\n### Background\n');
         const types = document.parseResult.value.elements.map(e => e.$type);
-        expect(types).toEqual(['Heading', 'Heading']);
+        expect(types).toEqual(['Heading', 'PlainRun', 'Heading', 'PlainRun']);
+    });
+
+    test('a single line break between two lines is a PlainRun (soft break), not a ParagraphBreak', async () => {
+        const document = await parseDocument('First line.\nSecond line.\n');
+        const types = document.parseResult.value.elements.map(e => e.$type);
+        expect(types).not.toContain('ParagraphBreak');
+        expect(types).toEqual(['PlainRun', 'PlainRun', 'PlainRun', 'PlainRun']);
+    });
+
+    test('a blank line between two lines is a ParagraphBreak', async () => {
+        const document = await parseDocument('First paragraph.\n\nSecond paragraph.\n');
+        const types = document.parseResult.value.elements.map(e => e.$type);
+        expect(types).toEqual(['PlainRun', 'ParagraphBreak', 'PlainRun', 'PlainRun']);
     });
 
     test('an external (non-anchor) link is plain text, not a CrossReference', async () => {

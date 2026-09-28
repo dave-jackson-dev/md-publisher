@@ -33,6 +33,9 @@ tsconfig.build.json      TS project-reference graph used by `npm run build`
 docs/planning/md-publisher/iterations/01/  Iteration 01's MVP Workshop outputs (BMC, VPC, story
                           map, domain storytelling with BR-1..BR-9, architecture design, Gherkin
                           features, UX design, MVP plan, Sprint 1 plan) — read `summary.md` first
+examples/user-guide/     a real 3-chapter Publication with its actual generated DOCX/PDF/EPUB/Web
+                          output checked in under dist/ — reproduce it, or read it to see the
+                          pipeline's real behavior instead of trusting a description of it
 
 packages/
   language/              the Language bounded context (grammar + Structure Violation validation)

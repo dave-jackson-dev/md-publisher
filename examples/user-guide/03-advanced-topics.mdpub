@@ -1,0 +1,11 @@
+# Advanced Topics
+
+## Cross-References
+
+A link like this one pointing at [Setup](#setup) only resolves if a heading named Setup exists somewhere in the Publication. If it does not, the build refuses to produce any output at all until the Structure Violation is fixed.
+
+## Table of Contents
+
+EPUB output needs exactly one chapter whose front matter marks it as the table-of-contents source, which is what the Introduction chapter does.
+
+See [Introduction](#introduction) to start over from the beginning.

@@ -3,11 +3,16 @@ import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
 import { createMdPublisherServices, type Document } from 'md-publisher-language';
 import { compileChapter } from '../src/model.js';
+import type { ChapterParagraphBlock } from '../src/types.js';
 
 async function parseDocument(input: string): Promise<Document> {
     const services = createMdPublisherServices(EmptyFileSystem);
     const document = await parseHelper<Document>(services.MdPublisher)(input, { validation: false });
     return document.parseResult.value;
+}
+
+function flattenText(paragraph: ChapterParagraphBlock): string {
+    return paragraph.runs.map(run => run.type === 'text' ? run.value : run.text).join('');
 }
 
 describe('compileChapter', () => {
@@ -47,5 +52,23 @@ describe('compileChapter', () => {
         if (paragraph.type === 'paragraph') {
             expect(paragraph.runs).toContainEqual({ type: 'link', text: 'Setup', targetSlug: 'setup' });
         }
+    });
+
+    test('two lines wrapped without a blank line between them stay one paragraph, joined by a space', async () => {
+        const document = await parseDocument('This is a long sentence that a writer\nwrapped onto a second line.\n');
+        const chapter = compileChapter('/pub/notes.mdpub', document);
+
+        expect(chapter.blocks).toHaveLength(1);
+        const paragraph = chapter.blocks[0] as ChapterParagraphBlock;
+        expect(flattenText(paragraph)).toBe('This is a long sentence that a writer wrapped onto a second line.');
+    });
+
+    test('a blank line between two lines starts a new paragraph, not one glued-together paragraph', async () => {
+        const document = await parseDocument('First paragraph ends here.\n\nSecond paragraph starts here.\n');
+        const chapter = compileChapter('/pub/notes.mdpub', document);
+
+        expect(chapter.blocks).toHaveLength(2);
+        expect(flattenText(chapter.blocks[0] as ChapterParagraphBlock)).toBe('First paragraph ends here.');
+        expect(flattenText(chapter.blocks[1] as ChapterParagraphBlock)).toBe('Second paragraph starts here.');
     });
 });

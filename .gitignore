@@ -4,6 +4,10 @@
 !.vscode/tasks.json
 node_modules/
 dist/
+# Exception: examples/user-guide/dist is committed on purpose, as real generated output
+# demonstrating live usage — see examples/README.md.
+!examples/user-guide/dist/
+!examples/user-guide/dist/**
 out/
 **/src/generated
 syntaxes/
