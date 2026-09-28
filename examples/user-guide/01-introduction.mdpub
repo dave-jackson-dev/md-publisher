@@ -7,4 +7,4 @@ toc: true
 
 md-publisher turns a folder of mdpub files into DOCX, PDF, Web, and EPUB output from one command. This guide walks through installing the CLI, building your first Publication, and where to go next.
 
-See [Setup](#setup) to install the CLI, or jump straight to [Advanced Topics](#advanced-topics) if you already have it running.
+See [Setup](#setup) to install the CLI, or jump straight to [Advanced Topics](#advanced-topics) if you already have it running. For every construct md-publisher supports, with its syntax and rendered output side by side, see the [Syntax Reference](#syntax-reference).
