@@ -29,6 +29,14 @@ describe('Linking tests', () => {
         expect(violations(intro)).toHaveLength(0);
     });
 
+    test('a cross-reference resolves against a heading in a .md Document, not only .mdpub', async () => {
+        const guide = await parseHelper<Document>(services.MdPublisher)('## Setup\n', { validation: false, documentUri: 'file:///guide.md' });
+        const intro = await parseHelper<Document>(services.MdPublisher)('See [Setup](#setup) for prerequisites.\n', { validation: false, documentUri: 'file:///intro.mdpub' });
+        await services.shared.workspace.DocumentBuilder.build([guide, intro], { validation: true });
+
+        expect(violations(intro)).toHaveLength(0);
+    });
+
     test('two Documents each declaring the same heading text is an ambiguous target for both', async () => {
         const intro = await parseHelper<Document>(services.MdPublisher)('## Getting Started\n', { validation: false, documentUri: 'file:///intro.mdpub' });
         const chapter1 = await parseHelper<Document>(services.MdPublisher)('## Getting Started\n', { validation: false, documentUri: 'file:///chapter-1.mdpub' });

@@ -13,8 +13,8 @@ Requires Node.js 20.10.0 or newer.
 
 ## Usage
 
-A Publication is a directory of `.mdpub` Documents. Chapter order is filename-alphabetical (e.g.
-`01-intro.mdpub`, `02-setup.mdpub`, ...).
+A Publication is a directory of `.md` and/or `.mdpub` Documents. Chapter order is
+filename-alphabetical (e.g. `01-intro.mdpub`, `02-setup.md`, ...).
 
 ```bash
 md-publisher-cli generate <publication-dir> --targets docx,pdf,web,epub

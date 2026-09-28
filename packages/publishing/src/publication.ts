@@ -35,10 +35,10 @@ export async function loadPublication(directory: string): Promise<LoadedPublicat
     }
 
     const fileNames = (await fs.readdir(absoluteDir))
-        .filter(fileName => fileName.endsWith('.mdpub'))
+        .filter(fileName => fileName.endsWith('.md') || fileName.endsWith('.mdpub'))
         .sort();
     if (fileNames.length === 0) {
-        throw new Error(`No .mdpub files found in Publication directory: ${absoluteDir}`);
+        throw new Error(`No .md or .mdpub files found in Publication directory: ${absoluteDir}`);
     }
 
     const services = createMdPublisherServices(NodeFileSystem).MdPublisher;

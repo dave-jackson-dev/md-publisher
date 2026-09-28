@@ -5,7 +5,7 @@ compiles an already-validated Publication into DOCX, PDF, EPUB, and Web output.
 
 ## What's in the folder?
 
-- `src/publication.ts` — loads a directory of `.mdpub` files as one Publication via
+- `src/publication.ts` — loads a directory of `.md`/`.mdpub` files as one Publication via
   `md-publisher-language`'s workspace services, and surfaces Structure Violations.
 - `src/model.ts` — compiles a validated `Document` AST into this package's own
   target-independent intermediate representation (`Chapter`/`ChapterBlock`).
