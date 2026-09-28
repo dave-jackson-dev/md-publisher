@@ -64,7 +64,7 @@ export type ChapterBlock =
     | ChapterListBlock;
 
 export interface Chapter {
-    /** Absolute path of the source .mdpub file. */
+    /** Absolute path of the source .md or .mdpub file. */
     sourcePath: string;
     /** File name without extension, e.g. "01-intro" from "01-intro.mdpub". Used to name per-chapter output files (Web, EPUB). */
     fileBaseName: string;

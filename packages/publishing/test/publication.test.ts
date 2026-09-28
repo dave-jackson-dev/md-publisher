@@ -60,8 +60,32 @@ describe('loadPublication', () => {
         expect(violations[0].diagnostic.message).toContain('#setup');
     });
 
-    test('rejects a directory with no .mdpub files', async () => {
-        await expect(loadPublication(tempDir)).rejects.toThrow('No .mdpub files found');
+    test('rejects a directory with no .md or .mdpub files', async () => {
+        await expect(loadPublication(tempDir)).rejects.toThrow('No .md or .mdpub files found');
+    });
+
+    test('loads .md files alongside .mdpub files, in filename-alphabetical order', async () => {
+        await writeFiles({
+            '02-chapter-one.md': '# Chapter One\n',
+            '01-intro.mdpub': '# Intro\n'
+        });
+
+        const publication = await loadPublication(tempDir);
+
+        expect(publication.chapters.map(c => path.basename(c.sourcePath))).toEqual([
+            '01-intro.mdpub',
+            '02-chapter-one.md'
+        ]);
+    });
+
+    test('resolves a cross-reference from a .mdpub Document to a heading in a .md Document', async () => {
+        await writeFiles({
+            '01-intro.mdpub': 'See [Setup](#setup) for prerequisites.\n',
+            '02-setup.md': '## Setup\n'
+        });
+
+        const publication = await loadPublication(tempDir);
+        expect(collectStructureViolations(publication)).toHaveLength(0);
     });
 });
 

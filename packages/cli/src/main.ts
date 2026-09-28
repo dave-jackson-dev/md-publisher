@@ -74,7 +74,7 @@ export default function (): void {
 
     program
         .command('generate')
-        .argument('<publication>', 'path to the Publication directory (a folder of .mdpub Documents)')
+        .argument('<publication>', 'path to the Publication directory (a folder of .md or .mdpub Documents)')
         .option('--targets <targets>', `comma-separated Build Targets (${ALL_BUILD_TARGETS.join(', ')})`, ALL_BUILD_TARGETS.join(','))
         .description('Validates a Publication and generates the requested Build Targets into ./dist.')
         .action(generateAction);
