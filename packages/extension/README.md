@@ -1,7 +1,8 @@
 # md-publisher
 
 Build-time structural validation for `.mdpub` documents, right in the editor — live as you type,
-not only when you build.
+not only when you build — plus commands to open `.mdpub` files and publish a folder straight from
+the Editor.
 
 `.mdpub` is a Markdown-based format (headings, paragraphs, emphasis/strong, code spans, fenced
 code blocks, blockquotes, lists, images, links, cross-references, thematic breaks — a practical
@@ -31,15 +32,21 @@ If the extension's language server connection is ever lost, a status bar item re
 "⚠ Validation unavailable" appears — diagnostics may be stale or absent while it's shown, and are
 never presented as if the Document were valid. It disappears again once the connection recovers.
 
+## Commands
+
+- **`md-publisher: Open File...`** — available from the Command Palette. Opens a file picker
+  scoped to `.mdpub`/`.md` files and opens the chosen file with the `md-publisher` language mode
+  explicitly set, sidestepping VS Code's built-in Markdown support also claiming `.md`.
+- **`md-publisher: Publish`** — right-click a folder in the Explorer to generate its Publication.
+  Prompts for a Build Target (DOCX, PDF, Web, EPUB, or All) and writes output into a `dist`
+  subfolder next to the source, adding `dist/` to the folder's `.gitignore` if it isn't already
+  ignored. A Structure Violation in any source file refuses Generation entirely — the same rule the
+  `md-publisher-cli` `generate` command follows.
+
 ## Requirements
 
 VS Code 1.67.0 or newer. No other setup — the extension activates automatically when you open a
 `.mdpub` file.
-
-## What this extension does not do
-
-Generation (producing DOCX/PDF/EPUB/Web output from a `.mdpub` Publication) is a separate part of
-`md-publisher` — see [`md-publisher-cli`](https://www.npmjs.com/package/md-publisher-cli).
 
 ## More information
 
