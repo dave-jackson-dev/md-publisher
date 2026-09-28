@@ -3,6 +3,7 @@
     "description": "The cli specific package",
     "version": "0.0.1",
     "type": "module",
+    "license": "MIT",
     "engines": {
         "node": ">=20.10.0",
         "npm": ">=10.2.3"

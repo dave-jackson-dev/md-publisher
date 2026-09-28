@@ -25,7 +25,7 @@ export type MdPublisherServices = LangiumServices & MdPublisherAddedServices
  */
 export const MdPublisherModule: Module<MdPublisherServices, PartialLangiumServices & MdPublisherAddedServices> = {
     validation: {
-        MdPublisherValidator: () => new MdPublisherValidator()
+        MdPublisherValidator: (services) => new MdPublisherValidator(services)
     }
 };
 

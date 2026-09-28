@@ -1,4 +1,4 @@
-import type { Model } from 'md-publisher-language';
+import type { Document } from 'md-publisher-language';
 import { createMdPublisherServices, MdPublisherLanguageMetaData } from 'md-publisher-language';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -15,7 +15,7 @@ const packageContent = await fs.readFile(packagePath, 'utf-8');
 
 export const generateAction = async (source: string, destination: string): Promise<void> => {
     const services = createMdPublisherServices(NodeFileSystem).MdPublisher;
-    const model = await extractAstNode<Model>(source, services);
+    const model = await extractAstNode<Document>(source, services);
     const generatedFilePath = generateOutput(model, source, destination);
     console.log(chalk.green(`Code generated succesfully: ${generatedFilePath}`));
 };
