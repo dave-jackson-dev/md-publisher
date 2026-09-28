@@ -141,3 +141,23 @@ mockups at [`mockups/cli-output.svg`](./mockups/cli-output.svg) and
   thinner Sprint-1-only option the Story Map's own MVP Slice check made available.
 - v1 cut confirmed as a real, coherent walking skeleton, not an incoherent bundle of individually
   justified stories.
+
+## Workshop 9 — Sprint 1 Planning (last of nine)
+
+**Status: complete**, accepted 2026-09-27. See [`09-sprint-1-plan.md`](./09-sprint-1-plan.md),
+transcript at
+[`transcripts/09-sprint-planning.transcript.md`](./transcripts/09-sprint-planning.transcript.md).
+
+- Greenfield verified independently (twice — once during facilitate, re-verified during evaluate):
+  the grammar is still the placeholder, the generator is still a TODO stub, `feat/markdown-grammar`
+  has no real work. No migration/reuse finding.
+- 11 dependency-ordered tasks, 44 points total. **Founder-directed split** into Sprint 1a
+  ("Validate," 18 pts — grammar, structural validation, extension publish-readiness, no
+  generation) and Sprint 1b ("Generate," 26 pts — `packages/publishing`, all four generators, CLI
+  wiring), following the Language-before-Publishing dependency order rather than an arbitrary cut.
+- Acts on Workshop 5's `packages/publishing` recommendation now, as a real Sprint 1b task, rather
+  than deferring it again.
+- **This is the last of the nine canonical workshops.** Per `stop-sprint-planning:handoff`, the
+  next stage is `start-provision-environment` (standing up the dev/CI scaffold Sprint 1 assumes),
+  **not** the iteration closing — `stop-mvp-iteration` stays open through Provision Environment and
+  actual Scrum Sprint execution.
