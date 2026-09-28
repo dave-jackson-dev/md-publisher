@@ -2,12 +2,82 @@ import * as fs from 'node:fs';
 import * as fsPromises from 'node:fs/promises';
 import * as path from 'node:path';
 import PDFDocument from 'pdfkit';
-import type { CompiledPublication, ParagraphRun } from '../types.js';
+import type { Chapter, ChapterBlock, ChapterListItem, CompiledPublication, ParagraphRun } from '../types.js';
 
 const HEADING_FONT_SIZES = [24, 20, 16, 14, 12, 11];
+const INDENT_PER_LEVEL = 24;
 
+/**
+ * Flattens a run to its visible text. Bold/italic/code styling and real image embedding would
+ * need multiple styled `.text()` calls per paragraph in pdfkit's layout model, a bigger change
+ * than this generator's existing scope note already accepts (see below) — every run still
+ * renders its own text content correctly, just without the corresponding visual distinction.
+ */
 function runText(run: ParagraphRun): string {
-    return run.type === 'text' ? run.value : run.text;
+    switch (run.type) {
+        case 'text':
+            return run.value;
+        case 'crossReference':
+        case 'externalLink':
+            return run.text;
+        case 'code':
+            return run.value;
+        case 'image':
+            return `[Image: ${run.alt || run.url}]`;
+        case 'emphasis':
+        case 'strong':
+            return run.runs.map(runText).join('');
+        case 'hardBreak':
+            return '\n';
+    }
+}
+
+function renderListItems(doc: PDFKit.PDFDocument, items: ChapterListItem[], ordered: boolean, level: number): void {
+    items.forEach((item, index) => {
+        const marker = ordered ? `${index + 1}. ` : '• ';
+        const text = marker + item.runs.map(runText).join('');
+        doc.fontSize(11).font('Helvetica').text(text, { indent: level * INDENT_PER_LEVEL, paragraphGap: 4 });
+        for (const child of item.children) {
+            renderListItems(doc, child.items, child.ordered, level + 1);
+        }
+    });
+}
+
+function renderBlock(doc: PDFKit.PDFDocument, block: ChapterBlock, quoteDepth = 0): void {
+    const indent = quoteDepth * INDENT_PER_LEVEL;
+    switch (block.type) {
+        case 'heading':
+            doc.fontSize(HEADING_FONT_SIZES[block.level - 1]).font('Helvetica-Bold').text(block.text, { paragraphGap: 8 });
+            return;
+        case 'paragraph': {
+            const text = block.runs.map(runText).join('');
+            doc.fontSize(11).font('Helvetica').text(text, { indent, paragraphGap: 8 });
+            return;
+        }
+        case 'codeBlock':
+            doc.fontSize(9).font('Courier').text(block.content, { indent, paragraphGap: 8 });
+            return;
+        case 'thematicBreak': {
+            const y = doc.y + 6;
+            doc.moveTo(doc.page.margins.left, y).lineTo(doc.page.width - doc.page.margins.right, y).stroke();
+            doc.moveDown();
+            return;
+        }
+        case 'blockQuote':
+            for (const child of block.blocks) {
+                renderBlock(doc, child, quoteDepth + 1);
+            }
+            return;
+        case 'list':
+            renderListItems(doc, block.items, block.ordered, 0);
+            return;
+    }
+}
+
+function renderChapter(doc: PDFKit.PDFDocument, chapter: Chapter): void {
+    for (const block of chapter.blocks) {
+        renderBlock(doc, block);
+    }
 }
 
 /**
@@ -35,14 +105,7 @@ export async function generatePdf(publication: CompiledPublication, outDir: stri
         if (chapterIndex > 0) {
             doc.addPage();
         }
-        for (const block of chapter.blocks) {
-            if (block.type === 'heading') {
-                doc.fontSize(HEADING_FONT_SIZES[block.level - 1]).font('Helvetica-Bold').text(block.text, { paragraphGap: 8 });
-            } else {
-                const text = block.runs.map(runText).join('');
-                doc.fontSize(11).font('Helvetica').text(text, { paragraphGap: 8 });
-            }
-        }
+        renderChapter(doc, chapter);
     });
 
     doc.end();

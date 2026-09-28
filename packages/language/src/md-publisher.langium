@@ -1,68 +1,104 @@
 grammar MdPublisher
 
-// A .mdpub Document is a flat, ordered sequence of elements: an optional front-matter
-// block, ATX headings, cross-reference links, paragraph breaks, and everything else as
-// plain text runs. Markdown's inline content doesn't decompose cleanly into a traditional
-// nested grammar, so this stays deliberately flat — structure that BR-1..BR-4 care about
-// (front-matter position, heading order, cross-reference targets) is still fully
-// recoverable from document order, and each recognized construct keeps its own CST range
-// for precise diagnostics.
+// A .mdpub Document is a flat, ordered sequence of block-level elements. Each element captures
+// its ENTIRE raw line (or, for front matter/fenced code, its entire raw multi-line span) as a
+// single string — the grammar only decides *what kind* of block a line is, never what's inside
+// it. Inline content (emphasis, links, cross-references, code spans, ...) is parsed separately,
+// by md-publisher-inline.ts, from each block's raw text. This block/inline split mirrors
+// CommonMark's own two-phase algorithm (the spec itself parses blocks first, inlines second) and
+// is what makes a Chevrotain/Langium grammar — fundamentally a single-pass lexer plus a
+// context-free parser, not indentation- or two-phase-aware on its own — tractable at all for a
+// CommonMark-shaped language. See Sprint 2a's plan
+// (docs/planning/md-publisher/iterations/01/10-sprint-2-grammar-plan.md) for the full rationale
+// and the "practical superset, not full spec" scope this implements.
+//
+// Nesting (list items containing sub-lists, blockquotes containing lists, multi-paragraph list
+// items, ...) is NOT represented here as a recursive grammar tree. BlockQuoteLine and
+// ListItemLine are still flat, one-per-physical-line elements, same as every other block type —
+// packages/publishing's compileChapter groups consecutive lines into actual nested structures
+// by inspecting each line's own indent/marker-depth. This keeps the grammar's lexer-priority
+// reasoning identical to every other block type (see the terminal ordering note below) instead
+// of needing a custom indentation-aware token builder.
 entry Document:
     elements+=DocumentElement*;
 
 DocumentElement:
-    FrontMatter | Heading | CrossReference | ParagraphBreak | PlainRun;
+    FrontMatter | FencedCodeBlock | Heading | ThematicBreak | BlockQuoteLine | ListItemLine | ParagraphBreak | TextLine;
 
-// YAML front matter fenced by `---` lines. Recognized wherever it appears in the
-// token stream (not only at the top) so BR-2 can flag a misplaced block instead of the
-// parser simply failing to see it.
+// YAML front matter fenced by `---` lines. Per 08-mvp-plan.md's Finding 3, front matter is only
+// ever *meant* to be the Document's first element (BR-2, which validated that, is retired) — but
+// the grammar still recognizes a well-formed `---`-fenced block with real content wherever it
+// occurs, same as Sprint 1a. Restricting recognition to true document-start would need a custom,
+// position-aware token builder (Langium's lexer has no built-in "only at offset 0" terminal
+// concept); given BR-2 no longer needs to *detect* a misplaced block, that engineering cost isn't
+// worth it for this Iteration's scope. Documented consequence: a `---`-fenced span that happens to
+// contain YAML-key:value-shaped lines, occurring later in a Document, is still read as an (unused)
+// FrontMatter node rather than a thematic break followed by ordinary paragraph text — a known,
+// intentionally accepted edge case, not a bug to chase down here.
 FrontMatter:
     raw=FRONT_MATTER_BLOCK;
 
-// An ATX heading line, e.g. "## Setup". Level and text are derived from `raw` at
-// validation time rather than split into grammar properties, since splitting them
-// would require terminals shorter than the whole-line match and lose the tie-break
-// against TEXT_RUN (see terminal ordering note below).
+// A fenced code block (``` or ~~~), info string and all, captured verbatim start to end — code
+// block content is never inline-parsed, per CommonMark.
+FencedCodeBlock:
+    raw=FENCED_CODE_BLOCK;
+
+// An ATX heading line, e.g. "## Setup". Deliberately NOT inline-parsed (no emphasis/links inside
+// heading text) — a scope-narrowing simplification kept from Sprint 1a, not a regression: heading
+// text has always been used as a plain string (for cross-reference anchor slugs), and CommonMark
+// technically allowing inline formatting there isn't worth the added complexity for this
+// Iteration's practical-superset scope.
 Heading:
     raw=HEADING_LINE;
 
-// A Markdown inline link whose target is a same-Publication anchor, e.g.
-// "[See Setup](#setup)". Text/anchor are likewise derived from `raw` in code.
-CrossReference:
-    raw=CROSS_REF;
+// A thematic break: 3+ of the same "-", "*", or "_" character (with optional interior
+// whitespace) alone on a line.
+ThematicBreak:
+    raw=THEMATIC_BREAK_LINE;
 
-// A blank line: two or more consecutive line breaks, ending the current paragraph.
-// Distinct from a single line break (BLANK_LINE requires 2+, so it never matches where
-// only a SOFT_BREAK does — see terminal definitions) — two adjacent source lines with no
-// blank line between them are still the same paragraph, soft-wrapped.
+// One line of a blockquote: 1+ leading ">" characters (nesting depth) plus the rest of the line.
+// Consecutive BlockQuoteLine elements with no ParagraphBreak between them belong to the same
+// logical blockquote — grouped in packages/publishing's compileChapter, not here.
+BlockQuoteLine:
+    raw=BLOCKQUOTE_LINE;
+
+// One line of a list item: leading indent (nesting depth) + a bullet ("-"/"*"/"+") or ordinal
+// ("1." / "1)") marker + the rest of the line. Continuation lines of a multi-line item are just
+// further TextLine elements at matching indent — again grouped in compileChapter.
+ListItemLine:
+    raw=LIST_ITEM_LINE;
+
+// A blank line: two or more consecutive line breaks, ending the current paragraph/list-item/
+// blockquote run.
 ParagraphBreak:
     raw=BLANK_LINE;
 
-// Everything else: prose, external links, malformed/incomplete bracket syntax, and a
-// single line break within a paragraph (SOFT_BREAK) — packages/publishing's compileChapter
-// treats a SOFT_BREAK PlainRun as a joining space between the runs around it, matching
-// CommonMark's soft-break-as-space rule, rather than gluing adjacent lines together.
-PlainRun:
-    raw=TEXT_RUN | raw=STRAY_BRACKET | raw=SOFT_BREAK;
+// Any other non-blank line: plain paragraph text, inline-parsed from its raw content by
+// md-publisher-inline.ts.
+TextLine:
+    raw=TEXT_LINE;
 
-// Terminal order matters here, not just for readability: Chevrotain's lexer picks the
-// longest match at each position and only falls back to declaration order on an exact
-// tie. FRONT_MATTER_BLOCK and CROSS_REF never tie with TEXT_RUN (their matches are
-// either strictly longer or start at a character TEXT_RUN excludes), but HEADING_LINE
-// and TEXT_RUN produce byte-identical matches for a plain heading line (TEXT_RUN's
-// character class doesn't need to exclude '#'), so HEADING_LINE must be declared first.
-// BLANK_LINE and SOFT_BREAK never tie with each other or TEXT_RUN: BLANK_LINE's `{2,}`
-// requires strictly more characters than SOFT_BREAK can match at the same position, and
-// TEXT_RUN excludes '\n' entirely so it never competes with either.
-terminal FRONT_MATTER_BLOCK: /---\r?\n[\s\S]*?\r?\n---/;
+// Terminal order matters here, not just for readability: Chevrotain's lexer picks the longest
+// match at each position and only falls back to declaration order on an exact tie.
+// FRONT_MATTER_BLOCK and FENCED_CODE_BLOCK never tie with anything (they span multiple lines, so
+// their match is always longer than any single-line terminal's). HEADING_LINE,
+// THEMATIC_BREAK_LINE, BLOCKQUOTE_LINE, and LIST_ITEM_LINE all produce a match exactly as long as
+// TEXT_LINE would for the same line — an exact tie broken by declaring them first — *except*
+// against each other, where a real ambiguity exists ("- - -" matches both THEMATIC_BREAK_LINE and
+// LIST_ITEM_LINE at equal length) and is resolved the same way: THEMATIC_BREAK_LINE is declared
+// before LIST_ITEM_LINE, matching CommonMark's own real behavior (a "- - -" line is a thematic
+// break, not a 3-item list).
+terminal FRONT_MATTER_BLOCK: /---\r?\n[\s\S]+?\r?\n---/;
+terminal FENCED_CODE_BLOCK: /(?:```[^\n]*\r?\n[\s\S]*?\r?\n```|~~~[^\n]*\r?\n[\s\S]*?\r?\n~~~)/;
 terminal HEADING_LINE: /#{1,6} [^\n]*/;
-terminal CROSS_REF: /\[[^\]\n]+\]\(#[^)\n]+\)/;
+terminal THEMATIC_BREAK_LINE: /(?:-[ \t]*){3,}|(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}/;
+terminal BLOCKQUOTE_LINE: /[ \t]{0,3}>+[ \t]?[^\n]*/;
+terminal LIST_ITEM_LINE: /[ \t]*(?:[-*+]|[0-9]{1,9}[.)])[ \t]+[^\n]*/;
 terminal BLANK_LINE: /(?:\r?\n){2,}/;
-// Excludes '[' so it always yields to CROSS_REF/STRAY_BRACKET at a bracket position,
-// and excludes '\n' so it never spans a line break.
-terminal TEXT_RUN: /[^\n\[]+/;
-// Fallback for a '[' that isn't part of a valid cross-reference (e.g. unclosed, or a
-// markdown link to something other than a same-Publication anchor).
-terminal STRAY_BRACKET: /\[/;
-// A single line break not part of a blank line — see ParagraphBreak/PlainRun above.
-terminal SOFT_BREAK: /\r?\n/;
+terminal TEXT_LINE: /[^\n]+/;
+
+// A single line break (not part of a blank line) never carries information of its own anymore —
+// hard-vs-soft line break is decided by inspecting a TextLine's own trailing content (2+ trailing
+// spaces or a trailing backslash) when grouping lines into paragraphs, not by which terminal
+// matched the newline — so it can go back to being silently discarded here.
+hidden terminal LINE_BREAK: /\r?\n/;

@@ -37,19 +37,56 @@ describe('Validating: BR-1 and BR-4 (cross-references)', () => {
         expect(found).toHaveLength(1);
         expect(found[0].message).toContain('#setup');
     });
-});
 
-describe('Validating: BR-2 and BR-3 (front matter and heading order)', () => {
-
-    test('front matter placed after content is a Structure Violation', async () => {
-        const document = await parse('First paragraph of content.\n\n---\ntitle: Chapter One\n---\n');
-        expect(violations(document)).toHaveLength(1);
+    test('a cross-reference inside a list item resolves like one in a plain paragraph', async () => {
+        const document = await parse('## Setup\n\n- See [Setup](#setup) first\n');
+        expect(violations(document)).toHaveLength(0);
     });
 
-    test('front matter at the top of the Document raises no violation', async () => {
+    test('a dangling cross-reference inside a list item is still caught', async () => {
+        const document = await parse('- See [Setup](#setup) first\n');
+        const found = violations(document);
+        expect(found).toHaveLength(1);
+        expect(found[0].message).toContain('#setup');
+    });
+
+    test('a cross-reference inside a blockquote resolves like one in a plain paragraph', async () => {
+        const document = await parse('## Setup\n\n> See [Setup](#setup) first\n');
+        expect(violations(document)).toHaveLength(0);
+    });
+
+    test('a dangling cross-reference inside a blockquote is still caught', async () => {
+        const document = await parse('> See [Setup](#setup) first\n');
+        const found = violations(document);
+        expect(found).toHaveLength(1);
+        expect(found[0].message).toContain('#setup');
+    });
+
+    test('a cross-reference nested inside emphasis is still caught', async () => {
+        const document = await parse('See *[Setup](#setup)* first.\n');
+        const found = violations(document);
+        expect(found).toHaveLength(1);
+        expect(found[0].message).toContain('#setup');
+    });
+});
+
+describe('Validating: BR-2 retired (Sprint 2a, see 08-mvp-plan.md Finding 3)', () => {
+
+    test('front matter placed after content no longer raises a violation', async () => {
+        // BR-2 is retired outright (see md-publisher.langium's FrontMatter comment for why the
+        // grammar still recognizes a well-formed block wherever it occurs) — the validator
+        // simply no longer checks position at all.
+        const document = await parse('First paragraph of content.\n\n---\ntitle: Chapter One\n---\n');
+        expect(violations(document)).toHaveLength(0);
+    });
+
+    test('front matter at the top of the Document still raises no violation', async () => {
         const document = await parse('---\ntitle: Chapter One\n---\n\n# Chapter One\n');
         expect(violations(document)).toHaveLength(0);
     });
+});
+
+describe('Validating: BR-3 (heading order)', () => {
 
     test('a heading level skip is a Structure Violation naming the skipped level', async () => {
         const document = await parse('# Chapter Two\n\n### Background\n');

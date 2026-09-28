@@ -11,14 +11,57 @@ export interface ChapterHeadingBlock {
 
 export type ParagraphRun =
     | { type: 'text'; value: string }
-    | { type: 'link'; text: string; targetSlug: string };
+    /** A same-Publication anchor link — BR-1/BR-4 already guarantee this resolves to exactly one heading. */
+    | { type: 'crossReference'; text: string; targetSlug: string }
+    /** Any other link (external URL) — distinct from crossReference, which needs no host/target lookup. */
+    | { type: 'externalLink'; text: string; url: string }
+    | { type: 'emphasis'; runs: ParagraphRun[] }
+    | { type: 'strong'; runs: ParagraphRun[] }
+    | { type: 'code'; value: string }
+    | { type: 'image'; alt: string; url: string }
+    | { type: 'hardBreak' };
 
 export interface ChapterParagraphBlock {
     type: 'paragraph';
     runs: ParagraphRun[];
 }
 
-export type ChapterBlock = ChapterHeadingBlock | ChapterParagraphBlock;
+export interface ChapterCodeBlock {
+    type: 'codeBlock';
+    language: string | undefined;
+    content: string;
+}
+
+export interface ChapterThematicBreakBlock {
+    type: 'thematicBreak';
+}
+
+export interface ChapterBlockQuoteBlock {
+    type: 'blockQuote';
+    blocks: ChapterBlock[];
+}
+
+export interface ChapterListItem {
+    /** The item's own inline content. Multi-paragraph list items aren't supported — see
+     * Sprint 2a's plan for why (a documented "practical superset" simplification, not a bug). */
+    runs: ParagraphRun[];
+    /** Sub-lists indented deeper than this item, appearing immediately after it. */
+    children: ChapterListBlock[];
+}
+
+export interface ChapterListBlock {
+    type: 'list';
+    ordered: boolean;
+    items: ChapterListItem[];
+}
+
+export type ChapterBlock =
+    | ChapterHeadingBlock
+    | ChapterParagraphBlock
+    | ChapterCodeBlock
+    | ChapterThematicBreakBlock
+    | ChapterBlockQuoteBlock
+    | ChapterListBlock;
 
 export interface Chapter {
     /** Absolute path of the source .mdpub file. */

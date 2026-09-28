@@ -26,7 +26,7 @@ const publication: CompiledPublication = {
             tocSource: false,
             blocks: [
                 { type: 'heading', level: 1, text: 'Intro', slug: 'intro' },
-                { type: 'paragraph', runs: [{ type: 'text', value: 'See ' }, { type: 'link', text: 'Setup', targetSlug: 'setup' }] }
+                { type: 'paragraph', runs: [{ type: 'text', value: 'See ' }, { type: 'crossReference', text: 'Setup', targetSlug: 'setup' }] }
             ]
         },
         {
