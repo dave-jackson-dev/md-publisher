@@ -1,6 +1,6 @@
 {
     "name": "vscode-md-publisher",
-    "description": "Build-time structural validation for .mdpub documents — broken cross-references, out-of-order front matter, and heading-level skips flagged as you type.",
+    "description": "Build-time structural validation for .mdpub documents, plus commands to open .mdpub files and publish a folder to DOCX/PDF/Web/EPUB.",
     "version": "0.0.1",
     "displayName": "md-publisher",
     "type": "module",
@@ -33,24 +33,58 @@
             "language": "md-publisher",
             "scopeName": "source.md-publisher",
             "path": "syntaxes/md-publisher.tmLanguage.json"
-        }]
+        }],
+        "commands": [
+            {
+                "command": "md-publisher.openAsMdpub",
+                "title": "md-publisher: Open File...",
+                "category": "md-publisher"
+            },
+            {
+                "command": "md-publisher.publish",
+                "title": "md-publisher: Publish",
+                "category": "md-publisher"
+            }
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "md-publisher.publish",
+                    "when": "explorerResourceIsFolder",
+                    "group": "6_md-publisher"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "md-publisher.openAsMdpub"
+                },
+                {
+                    "command": "md-publisher.publish",
+                    "when": "false"
+                }
+            ]
+        }
     },
     "activationEvents": [
-        "onLanguage:md-publisher"
+        "onLanguage:md-publisher",
+        "onCommand:md-publisher.openAsMdpub",
+        "onCommand:md-publisher.publish"
     ],
     "main": "./out/extension/main.cjs",
     "scripts": {
         "clean": "shx rm -fr *.tsbuildinfo out syntaxes LICENSE",
         "vscode:prepublish": "npm run build",
         "build:prepare": "shx mkdir -p ./syntaxes/ && shx cp -f ../language/syntaxes/md-publisher.tmLanguage.json ./syntaxes/md-publisher.tmLanguage.json && shx cp -f ../../LICENSE ./LICENSE",
-        "build": "npm run build:prepare && tsc -b tsconfig.json && node esbuild.mjs",
+        "build:postprocess": "shx mkdir -p ./out/extension/data && shx cp -R ../../node_modules/pdfkit/js/data/. ./out/extension/data/",
+        "build": "npm run build:prepare && tsc -b tsconfig.json && node esbuild.mjs && npm run build:postprocess",
         "build:clean": "npm run clean && npm run build",
-        "watch": "npm run build:prepare && concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
+        "watch": "npm run build:prepare && npm run build:postprocess && concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.json --watch\" \"node esbuild.mjs --watch\"",
         "package": "vsce package",
         "publish": "vsce publish"
     },
     "dependencies": {
         "md-publisher-language": "0.0.1",
+        "md-publisher-publishing": "0.0.1",
         "vscode-languageclient": "~9.0.1",
         "vscode-languageserver": "~9.0.1"
     },

@@ -13,6 +13,11 @@ All notable changes to the `md-publisher` VS Code extension are documented here.
   blockquotes, and emphasis), ambiguous anchors, and heading-level skips.
 - A status bar warning when the language server disconnects, so diagnostics are never presented as
   current when they might be stale or absent.
+- `md-publisher: Open File...` command (Command Palette) to open a `.mdpub`/`.md` file with the
+  `md-publisher` language mode explicitly set.
+- `md-publisher: Publish` command (Explorer folder context menu) to generate a Publication's DOCX,
+  PDF, Web, and/or EPUB output into a `dist` subfolder, reusing the same Structure Violation and
+  `.gitignore` handling as the CLI's `generate` command.
 
 ### Changed
 

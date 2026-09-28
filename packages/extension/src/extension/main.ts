@@ -2,6 +2,7 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import * as vscode from 'vscode';
 import * as path from 'node:path';
 import { LanguageClient, State, TransportKind } from 'vscode-languageclient/node.js';
+import { registerCommands } from './commands.js';
 
 let client: LanguageClient;
 let disconnectedStatusBarItem: vscode.StatusBarItem;
@@ -10,6 +11,7 @@ let disconnectedStatusBarItem: vscode.StatusBarItem;
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     disconnectedStatusBarItem = createDisconnectedStatusBarItem();
     context.subscriptions.push(disconnectedStatusBarItem);
+    registerCommands(context);
     client = await startLanguageClient(context);
 }
 

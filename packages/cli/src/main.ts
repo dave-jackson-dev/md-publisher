@@ -7,17 +7,17 @@ import {
     ALL_BUILD_TARGETS,
     collectStructureViolations,
     compilePublication,
+    ensureOutputDirIgnored,
     generatePublication,
     loadPublication,
     type BuildTarget
 } from 'md-publisher-publishing';
-import { ensureOutputDirIgnored } from './gitignore.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const packagePath = path.resolve(__dirname, '..', 'package.json');
 const packageContent = await fs.readFile(packagePath, 'utf-8');
 
-function parseTargets(value: string): BuildTarget[] {
+export function parseTargets(value: string): BuildTarget[] {
     const requested = value.split(',').map(t => t.trim().toLowerCase());
     const invalid = requested.filter(t => !(ALL_BUILD_TARGETS as string[]).includes(t));
     if (invalid.length > 0) {
